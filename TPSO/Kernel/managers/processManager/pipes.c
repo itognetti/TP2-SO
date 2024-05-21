@@ -153,7 +153,7 @@ uint64_t getPipeInfo(pipesInfo * info){
 	int j = 0;
 	for(int i = 0; i < MAX_PIPES; i++){
 		if(pipeList[i].pipeID != 0){
-			info[j].ID = pipeList[i].pipeID;
+			info[j].id = pipeList[i].pipeID;
 			info[j].usage = pipeList[i].qty;
 			info[j].readNumBlocked = getSemaphoreBlockedProcessByID(pipeList[i].readSemID, info[j].readBlockedPIDS);
 			info[j].writeNumBlocked = getSemaphoreBlockedProcessByID(pipeList[i].writeSemID, info[j].writeBlockedPIDS);

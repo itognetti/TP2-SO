@@ -104,7 +104,7 @@ int makeSemaphoreAvailable(unsigned int value){
 uint64_t getSemaphoreInfo(semaphoreInfo * info){
 	int j = 0;
 	for(int i = 0; i < MAX_SEM; i++){
-		if(semaphoreList[i].ID != 0){
+		if(semaphoreList[i].id != 0){
 			info[j].id = semaphoreList[i].id;
 			info[j].value = semaphoreList[i].value;
 			info[j].numBlocked = getSemaphoreBlockedProcess(i, info[j].blockedPIDS);

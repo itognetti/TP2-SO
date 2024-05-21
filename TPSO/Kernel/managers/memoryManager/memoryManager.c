@@ -9,16 +9,16 @@ memStatus  * get_st(){
     return &mem_st; 
 }
 
-void mem_init(){
+void m_init(){
     mem_st.freeBytes = HP_SI; 
     addEOL((header_t *)HP_ST);
 }
 
-void * mem_malloc(uint64_t lenght){
-    if(lenght<=0){
+void * m_malloc(uint64_t length){
+    if(length<=0){
         return NULL; 
     }
-    uint64_t roundedSize = MASK_LAST_BIT(lenght+1+HEADER_SIZE);
+    uint64_t roundedSize = MASK_LAST_BIT(length+1+HEADER_SIZE);
     header_t *  freeBlock =findFree(roundedSize);
     if (freeBlock == NULL) {
         return NULL;
@@ -28,7 +28,7 @@ void * mem_malloc(uint64_t lenght){
 
 }
 
-void mem_free(void * block) {
+void m_free(void * block) {
     if(block == NULL || block < HP_ST || block >= HP_E) {
         return;
     }
@@ -47,8 +47,7 @@ memStatus  * get_st(){
     return &mem_st; 
 }
 
-
-void free_Block(header_t * block) {
+void freeBlock(header_t * block) {
     block->allocated = FALSE;
 
     header_t * nextBlock = (header_t *) SUM_PTR(block, block->size);
@@ -57,7 +56,7 @@ void free_Block(header_t * block) {
     }
 }
 
-header_t * find_Free(uint64_t length) {
+header_t * findFree(uint64_t length) {
      header_t * currentBlock = (header_t *) HP_ST;
 
      while(!IS_EOL(currentBlock->size) && (currentBlock->allocated || GET_SIZE(currentBlock->size) < length)) {
@@ -72,15 +71,12 @@ header_t * find_Free(uint64_t length) {
      return currentBlock;
 }
 
-
-
-void Include_EOL(header_t * block) {
+void addEOL(header_t * block) {
     block->size = 0;
     block->allocated = TRUE;
  }
 
-
-void add_Block(header_t *block, uint64_t newSize) {
+void addBlock(header_t *block, uint64_t newSize) {
     uint64_t originalSize = GET_SIZE(block->size);
 
     if (IS_EOL(block->size)) {
