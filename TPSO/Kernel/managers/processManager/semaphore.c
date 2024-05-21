@@ -1,5 +1,4 @@
-#include "../include/semaphore.h"
-
+#include "../../include/semaphore.h"
 int createSemaphore(unsigned int id, unsigned int value){
 	if(id == 0){
 		return INVALID_SEM_ID_ERROR;
