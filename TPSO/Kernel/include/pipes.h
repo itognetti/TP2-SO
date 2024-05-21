@@ -1,7 +1,7 @@
 #ifndef _PIPES_H_
 #define _PIPES_H_
 
-#include <semaphore.h>
+#include "./semaphore.h"
 #include <memoryManager.h>
 #include <stdint.h>
 #include <stdbool.h>

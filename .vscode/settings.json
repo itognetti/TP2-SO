@@ -1,5 +1,7 @@
 {
     "files.associations": {
-        "semaphore.h": "c"
+        "semaphore.h": "c",
+        "pipes.h": "c",
+        "memorymanager.h": "c"
     }
 }
