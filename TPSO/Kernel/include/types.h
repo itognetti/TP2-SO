@@ -14,4 +14,13 @@ typedef struct processInfo{
     uint8_t screen;
 } processInfo;
 
+typedef struct pipes_info{
+	unsigned int id;
+	unsigned int usage;
+	unsigned int read_num_blocked;
+	unsigned int read_blocked_pids[10];
+	unsigned int write_num_blocked;
+	unsigned int write_blocked_pids[10];
+}pipes_info;
+
 #endif
