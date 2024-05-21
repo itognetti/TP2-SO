@@ -276,7 +276,7 @@ int getProcessInfo(processInfo * info){
 			if(tasks[i].params !=NULL){
 				info[j].name = tasks[i].params[0];		
 			}
-			info[j].ID = tasks[i].PID;
+			info[j].id = tasks[i].PID;
 			info[j].state = tasks[i].state;
 			info[j].priority = tasks[i].priority;
 			info[j].stack = (uint64_t) tasks[i].stackStart;

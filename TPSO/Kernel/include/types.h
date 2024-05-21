@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-typedef struct process_info{
+typedef struct processInfo{
     char * name;
     unsigned int id;
     uint8_t state;
@@ -12,6 +12,6 @@ typedef struct process_info{
     uint64_t rsp;
     uint64_t pickd;
     uint8_t screen;
-} process_info;
+} processInfo;
 
 #endif

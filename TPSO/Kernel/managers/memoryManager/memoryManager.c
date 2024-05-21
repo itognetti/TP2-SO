@@ -29,7 +29,7 @@ void * mem_malloc(uint64_t lenght){
 }
 
 void mem_free(void * block) {
-    if(block == NULL || block < HEAP_START || block >= HEAP_END) {
+    if(block == NULL || block < HP_ST || block >= HP_E) {
         return;
     }
 
@@ -65,7 +65,7 @@ header_t * find_Free(uint64_t length) {
      }
 
      if(IS_EOL(currentBlock->size)) {
-         if(SUM_PTR(currentBlock, length + EOL_SIZE) > (uint64_t) HEAP_END) {
+         if(SUM_PTR(currentBlock, length + EOL_SIZE) > (uint64_t) HP_E) {
             return NULL;
          }
      }
@@ -113,4 +113,4 @@ void add_Block(header_t *block, uint64_t newSize) {
     mem_st.allocatedBlocks += 1;
 }
 
-
+#endif
