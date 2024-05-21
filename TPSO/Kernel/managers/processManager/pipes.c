@@ -1,4 +1,4 @@
-#include "../include/pipes.h"
+#include "../../include/pipes.h"
 
 int createPipe(unsigned int id){
 	if(id == 0)				
