@@ -31,5 +31,6 @@ void time();
 void pong();
 void infoReg();
 void clear();
-
+void testMm();
+void testProcesses();
 #endif

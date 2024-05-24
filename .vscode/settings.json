@@ -2,6 +2,8 @@
     "files.associations": {
         "semaphore.h": "c",
         "pipes.h": "c",
-        "memorymanager.h": "c"
+        "memorymanager.h": "c",
+        "mm_utils.h": "c",
+        "syscalls.h": "c"
     }
 }

@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 #include <date.h>
+#include "dataTypes.h"
 
 #define SYS_READ 0
 #define SYS_WRITE 1
