@@ -7,7 +7,7 @@
 #include <stdbool.h>
 #include <syscalls.h>
 #include <memoryManager.h>
-//#include <pipes.h>
+#include <pipes.h>
 
 #define NO_TASKS 0
 #define NO_TASK_FOUND -1
@@ -56,7 +56,7 @@
 #define STACK_POS(POS) (uint64_t *) (stackStart - (POS))
 
 // Task info
-typedef struct process_control_block{
+typedef struct PCB{ //Process Control Block
 		unsigned int PID;				// unique identifier > 0
 
 		uint64_t  stackPointer;			// value of rsp 
@@ -73,9 +73,9 @@ typedef struct process_control_block{
 		uint8_t input;
 
 		uint64_t ticks;					// amount of times the scheduler picked it to run
-}process_control_block;
+}PCB;
 
-static process_control_block tasks[TOTAL_TASKS];
+static PCB tasks[TOTAL_TASKS];
 
 static unsigned int newPID = 1;					// process identifier
 	

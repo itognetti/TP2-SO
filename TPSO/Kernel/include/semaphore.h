@@ -4,6 +4,7 @@
 #include <tasks.h>
 #include <interrupts.h>
 #include <types.h>
+#include <queue.h>
 
 #define MAX_SEM 40
 #define MAX_PROCESS 20
@@ -22,6 +23,7 @@ typedef struct semaphoreData{
 	unsigned int id;
 	unsigned int value;
 	unsigned int lock;
+	queueData queue;
 }semaphoreData;
 
 static semaphoreData semaphoreList[MAX_SEM] = {{0}};
@@ -34,5 +36,8 @@ unsigned int waitSemaphore(unsigned int id);
 int getAvailableSemaphore();
 int makeSemaphoreAvailable(unsigned int value);
 uint64_t getSemaphoreInfo(semaphoreInfo * info);
+unsigned int getSemaphoreBlockedProcess(unsigned int pos, unsigned int * blockedPIDS);
+unsigned int getSemaphoreBlockedProcessByID(unsigned int semaphoreID, unsigned int * blockedPIDS);
+unsigned int signalSemaphore(unsigned int ID);
 
 #endif

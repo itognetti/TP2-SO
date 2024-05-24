@@ -40,7 +40,7 @@ int findTask(unsigned int PID){
 		if(tasks[i].PID == PID && tasks[i].state != DEAD_PROCESS)
 			return i;
 	}	
-	return NO_TASK_FOUND;			// no task with that PID found
+	return NO_TASK_FOUND;
 }
 
 uint64_t buildStack(uint64_t entrypoint, char ** arg0, uint64_t stackEnd){
@@ -74,7 +74,7 @@ int addTask(uint64_t entrypoint, uint8_t input, uint8_t output, uint8_t priority
 	currentDimTasks++;
 
 	int pos;
-	for(pos = 0; tasks[pos].state != DEAD_PROCESS; pos++);	// find free space
+	for(pos = 0; tasks[pos].state != DEAD_PROCESS; pos++);
 
 	uint8_t * stackEnd = m_malloc(STACK_SIZE);
 
@@ -83,7 +83,6 @@ int addTask(uint64_t entrypoint, uint8_t input, uint8_t output, uint8_t priority
 
 	uint8_t * stackStart = (uint8_t *) buildStack(entrypoint, arg0, (uint64_t) stackEnd);
 
-	// Task initialization
 	tasks[pos].stackPointer = (uint64_t) stackStart - STACK_POINT_OF_ENTRY; 
 	tasks[pos].stackSegment = SS_VALUE;							
 
@@ -181,13 +180,13 @@ void killScreenProcesses(){
 
 int pauseOrUnpauseProcess(unsigned int pid){
 	int pos = findTask(pid);
-	if(pos < 0)					// trying to pass unexistent process
+	if(pos < 0)
 		return NO_TASK_FOUND;
 
 	if(tasks[pos].immortal)
 		return TASK_NOT_ALTERED;
 
-	tasks[pos].state = tasks[pos].state==PAUSED_PROCESS ? ACTIVE_PROCESS : PAUSED_PROCESS; 	// paused -> unpaused  
+	tasks[pos].state = tasks[pos].state==PAUSED_PROCESS ? ACTIVE_PROCESS : PAUSED_PROCESS; 
 
 	if(pos == currentTask){
 		forceChangeTask();
@@ -198,7 +197,7 @@ int pauseOrUnpauseProcess(unsigned int pid){
 
 int removeTask(unsigned int PID){
 	int pos = findTask(PID);
-	if(pos < 0)					// no task with that PID found
+	if(pos < 0)
 		return NO_TASK_FOUND;
 
 	if(tasks[pos].immortal)
@@ -264,7 +263,7 @@ uint64_t nextTask(uint64_t stackPointer, uint64_t stackSegment){
 		changeState(idleTaskPID, PAUSED_PROCESS);
 	}
 
-	currentRemainingTicks = 0;			// reset ticks counter
+	currentRemainingTicks = 0;
 
 	return tasks[currentTask].stackPointer;
 }

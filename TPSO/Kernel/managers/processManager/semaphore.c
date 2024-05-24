@@ -1,4 +1,5 @@
 #include "../../include/semaphore.h"
+
 int createSemaphore(unsigned int id, unsigned int value){
 	if(id == 0){
 		return INVALID_SEM_ID_ERROR;
@@ -16,6 +17,7 @@ int createSemaphore(unsigned int id, unsigned int value){
 			return INVALID_SEM_ID_ERROR;
 		}
 	}
+	createQueue(&(semaphoreList[freePos].queue), MAX_PROCESS);
 	semaphoreList[freePos].id = id;
 	semaphoreList[freePos].value = value;
 	activeSem++;
@@ -30,6 +32,7 @@ void destroySemaphore(unsigned int id){
 		semaphoreList[pos].id = 0;
 		semaphoreList[pos].value = 0;
 		unlock(&(semaphoreList[pos].lock));
+		destroyQueue(&(semaphoreList[pos].queue));
 	}
 	return;
 }
@@ -55,6 +58,7 @@ unsigned int waitSemaphore(unsigned int id){
 	else{
 		int PID = getCurrentPID();
 		changeState(PID, WAITING_FOR_SEM);
+		enqueue(&(semaphoreList[pos].queue), PID);
 		unlock(&(semaphoreList[pos].lock));
 		forceChangeTask();
 		return true;
@@ -112,4 +116,46 @@ uint64_t getSemaphoreInfo(semaphoreInfo * info){
 		}
 	}
 	return j;
+}
+
+unsigned int getSemaphoreBlockedProcess(unsigned int pos, unsigned int * blockedPIDS){
+	if(pos >= MAX_SEM){
+		return 0;
+	}
+
+	if(getQueueSize(&(semaphoreList[pos].queue)) > 0){
+		unsigned int pos;
+		queueIterator(&(semaphoreList[pos].queue), &pos);
+		int j = 0;
+		for( ; queueHasNext(&(semaphoreList[pos].queue), &pos); j++ ){
+			blockedPIDS[j] = (unsigned int) queueNext(&(semaphoreList[pos].queue), &pos);
+		}
+		return j;
+	}
+	return 0;
+}
+
+unsigned int getSemaphoreBlockedProcessByID(unsigned int semaphoreID, unsigned int * blockedPIDS){
+	int pos = findSemaphore(semaphoreID);
+	if(pos == INVALID_SEM_ID_ERROR)
+		return INVALID_SEM_ID_ERROR;
+
+	return getSemaphoreBlockedProcess((unsigned int)pos, blockedPIDS);
+}
+
+unsigned int signalSemaphore(unsigned int ID){
+	int pos = findSemaphore(ID);
+	if(pos == INVALID_SEM_ID_ERROR){
+		return INVALID_SEM_ID_ERROR;
+	}
+
+	lock(&(semaphoreList[pos].lock));
+	if(getQueueSize(&(semaphoreList[pos].queue)) > 0){
+		unsigned int blockedPID = dequeue(&(semaphoreList[pos].queue));
+		changeState(blockedPID, ACTIVE_PROCESS);
+	}else{
+		semaphoreList[pos].value++;
+	}
+	unlock(&(semaphoreList[pos].lock));
+	return true;
 }
