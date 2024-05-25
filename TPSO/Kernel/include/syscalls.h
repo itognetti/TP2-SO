@@ -12,6 +12,8 @@
 #include <memoryManager.h>
 #include <pipes.h>
 #include <semaphore.h>
+#include <types.h>
+#include <childProcess.h>
 
 #define BACKGROUND 0
 #define STDIN 1
@@ -53,5 +55,20 @@ void sys_holder(int time);
 void sys_beep(uint32_t beepTime);
 void sys_info_reg();
 void sys_draw(int row, int col, int color);
+
+void sys_allocate_memory(uint64_t length);
+void sys_destroy_pipe(unsigned int pipeId);
+void sys_get_pipe_info(pipesInfo * info);
+void sys_read_from_pipe(unsigned int pipeId, char * destination, unsigned int count);
+void sys_create_pipe_available();
+void sys_write_to_pipe(unsigned int pipeId, const char * source, unsigned int count);
+void sys_wait_sem(unsigned int semaphoreId);
+void sys_signal_sem(unsigned int semaphoreId);
+void sys_destroy_sem(unsigned int semaphoreId);
+void sys_create_sem(unsigned int semaphoreId, unsigned int initialValue);
+void sys_create_sem_available(unsigned int initialValue);
+void sys_register_child_process(uint64_t entryPoint, uint8_t input, uint8_t output, char ** arg0);
+void sys_wait_for_children();
+void sys_get_pid();
 
 #endif

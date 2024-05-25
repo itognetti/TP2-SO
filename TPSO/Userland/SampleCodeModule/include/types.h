@@ -1,8 +1,9 @@
-#ifndef _DATA_TYPES_H
-#define _DATA_TYPES_H
+#ifndef _TYPES_H
+#define _TYPES_H
+
 #include <stdint.h>
 
-typedef struct ProcessInfo {
+typedef struct processInfo {
     char * processName; 
     unsigned int processId;
     uint8_t processState;
@@ -11,22 +12,22 @@ typedef struct ProcessInfo {
     uint64_t processRsp;
     uint64_t processPickd;
     uint8_t processScreen;
-} ProcessInfo;
+} processInfo;
 
-typedef struct SemaphoreInfo {
+typedef struct semaphoreInfo {
     unsigned int semaphoreId;
     unsigned int semaphoreValue;
     unsigned int numBlockedProcesses;
     unsigned int blockedProcessIds[10];
-} SemaphoreInfo;
+} semaphoreInfo;
 
-typedef struct PipeInfo {
+typedef struct pipesInfo{
     unsigned int pipeId;
     unsigned int pipeUsage;
     unsigned int numBlockedReaders;
-    unsigned int blockedReaderIds[10];
+    unsigned int blockedReaderPids[10];
     unsigned int numBlockedWriters;
-    unsigned int blockedWriterIds[10];
-} PipeInfo;
+    unsigned int blockedWriterPids[10];
+} pipesInfo;
 
 #endif

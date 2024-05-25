@@ -44,7 +44,7 @@ uint64_t writePipe(int pipeId, const char * src, int count){
     return _syscall(SYS_WRITE_PIPE, pipeId, src, count);
 }
 
-uint64_t pipeInfo(PipeInfo * info){
+uint64_t pipeInfo(pipesInfo* info){
     return _syscall(SYS_PIPE_INFO, info);
 }
 

@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 #include <date.h>
-#include <dataTypes.h>
+#include "../include/types.h"
 
 #define BACKGROUND 0
 
@@ -48,7 +48,7 @@ void putPixel(int row, int col, int color);
 uint64_t alloc(int len);
 uint64_t readPipe(int pipeId, char * dest, int count);
 uint64_t writePipe(int pipeId, const char * src, int count);
-uint64_t pipeInfo(PipeInfo * info);
+uint64_t pipeInfo(pipesInfo * info);
 void destroyPipe( int pipeId);
 uint64_t registerPipeAvailable();
 uint64_t signalSemaphore(uint64_t semId);
