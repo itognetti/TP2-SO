@@ -75,6 +75,15 @@ void printTime(date currentDate){
     println(dateConverter(currentDate->year, buffer));
 }
 
+char * int64ToStringConverter(int64_t number){
+    char * str = (char *) malloc(21);
+    if(str == NULL){
+        return NULL;
+    }
+    // snprintf();
+    return str;
+}
+
 static unsigned int seed = 12345; // Semilla inicial
 
 int getRandomSign() {

@@ -1,7 +1,4 @@
-#include <stdint.h>
-#include <stdio.h>
-#include "./include/syscalls.h"
-
+#include <testUtils.h>
 
 static uint32_t z_seed = 362436069;
 static uint32_t w_seed = 521288629;
@@ -26,10 +23,8 @@ uint8_t checkMemory(void *start, uint8_t value, uint32_t size) {
             return 0;
         }
     }
-
     return 1;
 }
-
 
 void bussyWait(uint64_t n) {
   uint64_t i;
@@ -43,15 +38,13 @@ void endlessLoop() {
 }
 
 void endlessLoopPrint(uint64_t wait) {
-  int64_t pid = sys_get_pid();
+  int64_t pid = getPid();
 
   while (1) {
     printf("%d ", pid);
-    bussy_wait(wait);
+    bussyWait(wait);
   }
 }
-
-
 
 int64_t satoi(const char *str) {
     uint64_t index = 0;
