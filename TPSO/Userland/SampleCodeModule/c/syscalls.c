@@ -31,3 +31,27 @@ void getRegisters(){
 void putPixel(int row, int col, int color){
     _syscall(SYS_DRAW, row, col, color);
 }
+
+uint64_t alloc(int len){
+    return _syscall(SYS_ALLOC, len);
+}
+
+uint64_t readPipe(int pipeID, char * dest, int count){
+    return _syscall(SYS_READ_PIPE, pipeID, dest, count);
+}
+
+uint64_t writePipe(int pipeID, const char * src, int count){
+    return _syscall(SYS_WRITE_PIPE, pipeID, src, count);
+}
+
+uint64_t pipeInfo(PipeInfo * info){
+    return _syscall(SYS_PIPE_INFO, info);
+}
+
+void destroyPipe( int pipeID){
+    _syscall(SYS_DESTROY_PIPE, pipeID);
+}
+
+uint64_t registerPipeAvailable(){
+    return _syscall(SYS_REGISTER_PIPE_AVAILABLE);
+}
