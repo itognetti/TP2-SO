@@ -1,8 +1,4 @@
-#include "../include/syscalls.h"
-//#include "../include/multitasking.h"
-#include "../include/memoryManager.h"
-#include "../include/pipes.h"
-#include "../include/semaphore.h"
+#include <syscalls.h>
 
 void sys_write(char * string, int row, int col, int color){//no las modifique ya estaban de antes
     if(row == -1 || col == -1){

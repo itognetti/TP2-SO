@@ -8,6 +8,10 @@
 #include <registers.h>
 #include <time.h>
 #include <beeper.h>
+#include <tasks.h>
+#include <memoryManager.h>
+#include <pipes.h>
+#include <semaphore.h>
 
 #define BACKGROUND 0
 #define STDIN 1
@@ -22,6 +26,24 @@
 #define SYS_BEEP 5
 #define SYS_INFO_REG 6
 #define SYS_DRAW 7
+
+#define SYS_ALLOC 8
+#define SYS_DESTROY_PIPE 9
+#define SYS_PIPE_INFO 10
+#define SYS_READ_PIPE 11
+#define SYS_REGISTER_PIPE_AVAILABLE 12
+#define SYS_WRITE_PIPE 13
+
+#define SYS_SEM_WAIT 14
+#define SYS_SEM_SIGNAL 15
+#define SYS_SEM_DESTROY 16
+#define SYS_SEM_REG 17
+#define SYS_SEM_REG_AVAILABLE 18
+
+#define SYS_CHILD_PROC_REGISTER 19
+#define SYS_CHILD_WAIT 20
+
+#define SYS_GET_PID 21
 
 void sys_write(char * string, int row, int col, int color);
 void sys_read(char *buffer, int length);

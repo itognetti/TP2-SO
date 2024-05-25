@@ -1,4 +1,4 @@
-#include "../../include/pipes.h"
+#include <pipes.h>
 
 int createPipe(unsigned int id){
 	if(id == 0)				
@@ -108,7 +108,6 @@ void signalEOF(unsigned int id){
 	if(pos == INVALID_PIPE_ID){
 		return;
 	}
-
 	pipeList[pos].eof = 1;
 }
 
@@ -125,7 +124,7 @@ int readFromPipe(unsigned int id, char * buffer, unsigned int count){
 		waitSemaphore(pipeList[pos].readSemID);
 
 		buffer[i] = pipeList[pos].pipe[pipeList[pos].readPos];
-		INCREASE_MOD(pipeList[pos].readPos, PIPE_SIZE);
+		MOD_INCREMENT(pipeList[pos].readPos, PIPE_SIZE);
 		pipeList[pos].qty--;
 
 		signalSemaphore(pipeList[pos].writeSemID);
@@ -141,7 +140,7 @@ int writeToPipe(unsigned int id, const char * buffer, unsigned int count){
 	for(int i=0; i<count; i++){
 		waitSemaphore(pipeList[pos].writeSemID);
 		pipeList[pos].pipe[pipeList[pos].writePos] = buffer[i];
-		INCREASE_MOD(pipeList[pos].writePos, PIPE_SIZE);
+		MOD_INCREMENT(pipeList[pos].writePos, PIPE_SIZE);
 		pipeList[pos].qty++;
 
 		signalSemaphore(pipeList[pos].readSemID);
