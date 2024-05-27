@@ -36,6 +36,10 @@ uint64_t alloc(int len){
     return _syscall(SYS_ALLOC, len);
 }
 
+uint64_t freeMem(void * ptr){
+    return _syscall(SYS_FREE, (uint64_t) ptr, NULL, NULL, NULL);
+}
+
 uint64_t readPipe(int pipeId, char * dest, int count){
     return _syscall(SYS_READ_PIPE, pipeId, dest, count);
 }
@@ -94,4 +98,12 @@ uint64_t killProcess(unsigned int processPid){
 
 uint64_t pauseOrUnpauseProcess(unsigned int processPid){
     return _syscall(SYS_PAUSE_OR_UNPAUSE_PROC, processPid);
+}
+
+uint64_t registerProcess(uint64_t entrypoint, uint8_t input, uint8_t output, uint64_t arg0){
+    return _syscall(SYS_REGISTER_PROC, (uint64_t) entrypoint, (uint64_t) input, (uint64_t) output, arg0);
+}
+
+uint64_t niceProcess(uint8_t pid, int delta){
+    return _syscall(SYS_NICE, pid, delta, NULL, NULL );
 }

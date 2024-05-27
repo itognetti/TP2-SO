@@ -9,27 +9,25 @@ typedef struct ProcessRequest {
   enum ProcessState state;
 } ProcessRequest;
 
-uint64_t testProcesses(uint64_t argc, char *argv[]) {
+void testProcesses(char *argv[]) {
   uint8_t requestIndex;
   uint8_t aliveCount = 0;
   uint8_t action;
   uint64_t maxProcesses;
   char *emptyArguments[] = {0};
 
-  if (argc != 1)
-    return -1;
-
   if ((maxProcesses = satoi(argv[0])) <= 0)
-    return -1;
+    return ;
 
   ProcessRequest processRequests[maxProcesses];
+  printf("testProcesses: Creating processes \n");
 
   while (1) {
     for (requestIndex = 0; requestIndex < maxProcesses; requestIndex++) {
       processRequests[requestIndex].processId = registerChildProcess((uint64_t) &endlessLoop, 1, 1, (uint64_t) emptyArguments);
       if (processRequests[requestIndex].processId == -1) {
         printf("testProcesses: error while creating a process\n");
-        return -1;
+        return ;
       } else {
         processRequests[requestIndex].state = RUNNING;
         aliveCount++;
@@ -45,7 +43,7 @@ uint64_t testProcesses(uint64_t argc, char *argv[]) {
             if (processRequests[requestIndex].state == RUNNING || processRequests[requestIndex].state == BLOCKED) {
               if(killProcess(processRequests[requestIndex].processId) == -1){
                 printf("testProcesses: error while killing a process\n");
-                return -1;
+                return ;
               }
               processRequests[requestIndex].state = KILLED;
               aliveCount--;
@@ -56,7 +54,7 @@ uint64_t testProcesses(uint64_t argc, char *argv[]) {
             if (processRequests[requestIndex].state == RUNNING) {
                 if(pauseOrUnpauseProcess(processRequests[requestIndex].processId) == -1){
                   printf("testProcesses: error while blocking a process\n");
-                  return -1;    
+                  return ;    
                 }
               processRequests[requestIndex].state = BLOCKED;
             }
@@ -69,7 +67,7 @@ uint64_t testProcesses(uint64_t argc, char *argv[]) {
         if (processRequests[requestIndex].state == BLOCKED && generateUniformRandom(100) % 2) {
           if(pauseOrUnpauseProcess(processRequests[requestIndex].processId) == -1){
             printf("testProcesses: error while unblocking a process\n");
-            return -1;
+            return ;
           }
           processRequests[requestIndex].state = RUNNING;
         }

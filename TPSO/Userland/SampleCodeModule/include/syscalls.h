@@ -21,25 +21,30 @@
 #define SYS_DRAW 7
 
 #define SYS_ALLOC 8
-#define SYS_DESTROY_PIPE 9
+#define SYS_FREE 9
+
 #define SYS_PIPE_INFO 10
 #define SYS_READ_PIPE 11
 #define SYS_REGISTER_PIPE_AVAILABLE 12
 #define SYS_WRITE_PIPE 13
+#define SYS_DESTROY_PIPE 14
 
-#define SYS_SEM_WAIT 14
 #define SYS_SEM_SIGNAL 15
 #define SYS_SEM_DESTROY 16
 #define SYS_SEM_REG 17
 #define SYS_SEM_REG_AVAILABLE 18
+#define SYS_SEM_WAIT 19
 
-#define SYS_CHILD_PROC_REGISTER 19
 #define SYS_CHILD_WAIT 20
+#define SYS_CHILD_PROC_REGISTER 21
 
-#define SYS_GET_PID 21
+#define SYS_GET_PID 22
 
-#define SYS_PAUSE_OR_UNPAUSE_PROC 22
 #define SYS_KILL_PROC 23
+#define SYS_PAUSE_OR_UNPAUSE_PROC 24
+#define SYS_REGISTER_PROC 25
+
+#define SYS_NICE 26
 
 extern uint64_t _syscall(uint64_t syscall, ...);
 
@@ -53,6 +58,8 @@ void getRegisters();
 void putPixel(int row, int col, int color);
 
 uint64_t alloc(int len);
+uint64_t freeMem(void * ptr);
+
 uint64_t readPipe(int pipeId, char * dest, int count);
 uint64_t writePipe(int pipeId, const char * src, int count);
 uint64_t pipeInfo(pipesInfo * info);
@@ -68,5 +75,7 @@ uint64_t waitChildren();
 uint64_t registerChildProcess(uint64_t entryP, uint8_t input, uint8_t output, uint64_t arg0);
 uint64_t killProcess(unsigned int processPid);
 uint64_t pauseOrUnpauseProcess(unsigned int processPid);
+uint64_t registerProcess(uint64_t entrypoint, uint8_t input, uint8_t output, uint64_t arg0);
+uint64_t niceProcess(uint8_t pid, int delta);
 
 #endif

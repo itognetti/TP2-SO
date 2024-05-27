@@ -30,25 +30,30 @@
 #define SYS_DRAW 7
 
 #define SYS_ALLOC 8
-#define SYS_DESTROY_PIPE 9
+#define SYS_FREE 9
+
 #define SYS_PIPE_INFO 10
 #define SYS_READ_PIPE 11
 #define SYS_REGISTER_PIPE_AVAILABLE 12
 #define SYS_WRITE_PIPE 13
+#define SYS_DESTROY_PIPE 14
 
-#define SYS_SEM_WAIT 14
 #define SYS_SEM_SIGNAL 15
 #define SYS_SEM_DESTROY 16
 #define SYS_SEM_REG 17
 #define SYS_SEM_REG_AVAILABLE 18
+#define SYS_SEM_WAIT 19
 
-#define SYS_CHILD_PROC_REGISTER 19
 #define SYS_CHILD_WAIT 20
+#define SYS_CHILD_PROC_REGISTER 21
 
-#define SYS_GET_PID 21
+#define SYS_GET_PID 22
 
-#define SYS_PAUSE_OR_UNPAUSE_PROC 22
 #define SYS_KILL_PROC 23
+#define SYS_PAUSE_OR_UNPAUSE_PROC 24
+#define SYS_REGISTER_PROC 25
+
+#define SYS_NICE 26
 
 void sys_write(int fd, char * string, int row, int col, int color);
 void sys_read(int fd, char *buffer, int length);
@@ -58,7 +63,7 @@ void sys_holder(int time);
 void sys_beep(uint32_t beepTime);
 void sys_info_reg();
 void sys_draw(int row, int col, int color);
-
+uint64_t sys_free(void * pointer);
 void sys_write_to_stdout(char *buffer, int row, int col, int color);
 
 void sys_allocate_memory(uint64_t length);
@@ -77,5 +82,7 @@ void sys_wait_for_children();
 void sys_get_pid();
 void sys_kill_process(unsigned int processPid);
 void sys_pause_and_unpause_process(unsigned int processPid);
+uint64_t sys_register_process(uint64_t entryPoint, uint8_t input, uint8_t output, char ** arg0);
+void sys_nice(uint8_t pid, int delta);
 
 #endif

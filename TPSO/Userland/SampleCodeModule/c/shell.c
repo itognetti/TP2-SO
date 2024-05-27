@@ -1,15 +1,16 @@
 #include <shell.h>
 
 modules module[] = {
-    {"help", "          -    Displays the module list", help},
-    {"divzero", "       -    Throws Divide by Zero exception", divZero},
-    {"invopcode", "     -    Throws Invalid Operation Code exception", invOpCode},
-    {"time", "          -    Displays the systems current time", time},
-    {"pong", "          -    Loads Pong game", pong},
-    {"inforeg", "       -    Displays the registers state", infoReg},
-    {"clear", "         -    Clears the screen", clear},
-    {"testMm","         -    Test memory manager", testMm},
-    {"testProcess","    -    Test process management",testProcesses}
+    {"help", "            -    Displays the module list", help},
+    {"divzero", "         -    Throws Divide by Zero exception", divZero},
+    {"invopcode", "       -    Throws Invalid Operation Code exception", invOpCode},
+    {"time", "            -    Displays the systems current time", time},
+    {"pong", "            -    Loads Pong game", pong},
+    {"inforeg", "         -    Displays the registers state", infoReg},
+    {"clear", "           -    Clears the screen", clear},
+    {"testMemoryManager","-    Test memory manager", testMemoryManager},
+    {"testProcess","      -    Test process management", testProcesses},
+    {"testPriorities","   -    Test priorities", testPriorities}
 };
 
 static char *starter = "$> ";

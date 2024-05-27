@@ -31,8 +31,9 @@ void time();
 void pong();
 void infoReg();
 void clear();
-void testMm();
-uint64_t testProcesses(uint64_t argc, char *argv[]);
+void testMemoryManager();
+void testProcesses(char *argv[]);
+void testPriorities();
 
 // TODO add functions (cat, wc, etc.)
 

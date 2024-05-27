@@ -29,6 +29,9 @@ void syscallDispatcher(uint64_t id, uint64_t param1, uint64_t param2, uint64_t p
         case SYS_ALLOC:
             sys_allocate_memory((uint64_t) param1);
             break;
+        case SYS_FREE:
+            sys_free((void *) param1);
+            return 0;
         case SYS_DESTROY_PIPE:
             sys_destroy_pipe((unsigned int) param1);
             break;
@@ -74,5 +77,12 @@ void syscallDispatcher(uint64_t id, uint64_t param1, uint64_t param2, uint64_t p
         case SYS_KILL_PROC:
             sys_kill_process((unsigned int) param1);
             break;
+        case SYS_REGISTER_PROC:
+            sys_register_process((unsigned int) param1, (uint8_t) param2, (uint8_t) param3, (char**) param4);
+            break;
+        case SYS_NICE:
+			sys_nice(param1, param2);
+            break;
+
     }
 }

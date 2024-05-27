@@ -76,7 +76,7 @@ void sys_destroy_sem(unsigned int semaphoreId){
     destroySemaphore(semaphoreId);
 }
 
-uint64_t sysFreeMemory(void * pointer) {
+uint64_t sys_free(void * pointer) {
     m_free(pointer);
     return 1;    
 }
@@ -126,7 +126,7 @@ void sys_create_pipe(unsigned int pipeId){
     createPipe(pipeId);
 }
 
-uint64_t sysRegisterProcess(uint64_t entryPoint, uint8_t input, uint8_t output, char ** arg0){
+uint64_t sys_register_process(uint64_t entryPoint, uint8_t input, uint8_t output, char ** arg0){
     return addTask(entryPoint, input, output, DEFAULT_PRIORITY, MORTAL, arg0);
 }
 
@@ -169,4 +169,8 @@ void sys_kill_process(unsigned int processPid){
 
 void sys_pause_and_unpause_process(unsigned int processPid){
     pauseOrUnpauseProcess(processPid);
+}
+
+void sys_nice(uint8_t pid, int delta){
+	 changePriority(pid, delta);
 }

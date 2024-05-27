@@ -13,34 +13,29 @@ typedef struct memoryRequest {
   uint32_t size;
 } memoryRequest;
 
-uint64_t testMemoryManagement(uint64_t argumentCount, char *arguments[]) {
+void testMemoryManager(){
   memoryRequest memoryRequests[MAX_BLOCKS];
   uint8_t requestCount;
   uint32_t totalAllocated;
-  uint64_t maxMemorySize;
-
-  // Verify the number of arguments
-  if (argumentCount != 1) {
-    return -1;
-  }
-
-  // Convert the argument to an integer
-  if ((maxMemorySize = satoi(arguments[0])) <= 0) {
-    return -1;
-  }
+  uint64_t maxMemorySize = 2000;
 
   while (1) {
     requestCount = 0;
     totalAllocated = 0;
 
-    printf("testMm: allocating memory, please wait...\n");
+    printf("testMemoryManager: allocating memory, please wait...\n");
 
     // Request as many blocks as possible
     while (requestCount < MAX_BLOCKS && totalAllocated < maxMemorySize) {
       memoryRequests[requestCount].size = generateUniformRandom(maxMemorySize - totalAllocated - 1) + 1;
-      // memoryRequests[requestCount].address = malloc(memoryRequests[requestCount].size); // Need to implement syscall for malloc
+      memoryRequests[requestCount].address = (void *) alloc(memoryRequests[requestCount].size);
 
-      if (memoryRequests[requestCount].address) {
+      if(memoryRequests[requestCount].address == 0){
+        printf("testMemoryManager: out of memory\n");
+        return ;
+      }
+
+      if(memoryRequests[requestCount].address) {
         totalAllocated += memoryRequests[requestCount].size;
         requestCount++;
       }
@@ -57,8 +52,8 @@ uint64_t testMemoryManagement(uint64_t argumentCount, char *arguments[]) {
     for (uint32_t i = 0; i < requestCount; i++) {
       if (memoryRequests[i].address) {
         if (!checkMemory(memoryRequests[i].address, i, memoryRequests[i].size)) {
-          printf("testMm: error\n");
-          return -1;
+          printf("testMemoryManager: error\n");
+          return ;
         }
       }
     }
@@ -66,11 +61,10 @@ uint64_t testMemoryManagement(uint64_t argumentCount, char *arguments[]) {
     // Free memory
     for (uint32_t i = 0; i < requestCount; i++) {
       if (memoryRequests[i].address) {
-        // Need to implement syscall for free
-        // free(memoryRequests[i].address);
+        freeMem(memoryRequests[i].address);
       }
     }
 
-    printf("testMm: OK\n");
+    printf("testMemoryManager: OK\n");
   }
 }
