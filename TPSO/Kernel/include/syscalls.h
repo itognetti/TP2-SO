@@ -8,10 +8,10 @@
 #include <registers.h>
 #include <time.h>
 #include <beeper.h>
-#include <tasks.h>
-#include <memoryManager.h>
-#include <pipes.h>
-#include <semaphore.h>
+#include "tasks.h"
+#include "memoryManager.h"
+#include "pipes.h"
+#include "semaphore.h"
 #include <types.h>
 #include <childProcess.h>
 
