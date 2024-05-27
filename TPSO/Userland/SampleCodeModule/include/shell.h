@@ -32,5 +32,8 @@ void pong();
 void infoReg();
 void clear();
 void testMm();
-void testProcesses();
+uint64_t testProcesses(uint64_t argc, char *argv[]);
+
+// TODO add functions (cat, wc, etc.)
+
 #endif

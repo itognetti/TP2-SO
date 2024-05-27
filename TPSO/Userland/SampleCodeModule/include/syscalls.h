@@ -4,8 +4,12 @@
 #include <stdint.h>
 #include <date.h>
 #include "../include/types.h"
+#include <stddef.h>
 
 #define BACKGROUND 0
+#define STDIN 0
+#define STDOUT 1
+#define STDERR 2
 
 #define SYS_READ 0
 #define SYS_WRITE 1

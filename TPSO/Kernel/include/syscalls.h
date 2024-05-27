@@ -16,7 +16,7 @@
 #include <childProcess.h>
 
 #define BACKGROUND 0
-#define STDIN 1
+#define STDIN 0
 #define STDOUT 1
 #define STDERR 2
 

@@ -8,13 +8,13 @@
 #define MAX_BLOCKS 128
 
 // Structure for memory requests
-typedef struct MemoryRequest {
+typedef struct memoryRequest {
   void *address;
   uint32_t size;
-} MemoryRequest;
+} memoryRequest;
 
 uint64_t testMemoryManagement(uint64_t argumentCount, char *arguments[]) {
-  MemoryRequest memoryRequests[MAX_BLOCKS];
+  memoryRequest memoryRequests[MAX_BLOCKS];
   uint8_t requestCount;
   uint32_t totalAllocated;
   uint64_t maxMemorySize;
@@ -33,7 +33,7 @@ uint64_t testMemoryManagement(uint64_t argumentCount, char *arguments[]) {
     requestCount = 0;
     totalAllocated = 0;
 
-    puts("testMemoryManagement: Allocating memory...\n");
+    printf("testMm: allocating memory, please wait...\n");
 
     // Request as many blocks as possible
     while (requestCount < MAX_BLOCKS && totalAllocated < maxMemorySize) {
@@ -57,7 +57,7 @@ uint64_t testMemoryManagement(uint64_t argumentCount, char *arguments[]) {
     for (uint32_t i = 0; i < requestCount; i++) {
       if (memoryRequests[i].address) {
         if (!checkMemory(memoryRequests[i].address, i, memoryRequests[i].size)) {
-          printf("testMemoryManagement ERROR\n");
+          printf("testMm: error\n");
           return -1;
         }
       }
@@ -71,6 +71,6 @@ uint64_t testMemoryManagement(uint64_t argumentCount, char *arguments[]) {
       }
     }
 
-    puts("testMemoryManagement OK\n");
+    printf("testMm: OK\n");
   }
 }

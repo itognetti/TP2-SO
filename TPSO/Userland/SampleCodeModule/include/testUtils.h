@@ -1,7 +1,7 @@
 #ifndef TESTUTILS_H
 #define TESTUTILS_H
 
-#include <stdio.h>
+#include <libIO.h>
 #include "../include/syscalls.h"
 #include <stdint.h>
 

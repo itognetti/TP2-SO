@@ -75,13 +75,33 @@ void printTime(date currentDate){
     println(dateConverter(currentDate->year, buffer));
 }
 
+void invertedString(char * string, int len){
+    char aux;
+    for(int i = 0, j = len - 1; i < j; i++, j--){
+        aux = string[i];
+        string[i] = string[j];
+        string[j] = aux;
+    }
+}
+
 char * int64ToStringConverter(int64_t number){
-    char * str = (char *) malloc(21);
-    if(str == NULL){
+    char * buff = (char *) alloc(21);
+    if(buff == NULL){
         return NULL;
     }
-    // snprintf();
-    return str;
+    if(number == 0){
+        buff[0] = '0';
+        buff[1] = 0;
+        return buff; 
+    }
+    int index = 0;
+    while(number > 0){
+        buff[index++] = number % 10 + '0';
+        number /= 10;
+    }
+    invertedString(buff, index);
+    buff[index] = 0;
+    return buff;
 }
 
 static unsigned int seed = 12345; // Semilla inicial

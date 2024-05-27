@@ -9,7 +9,7 @@ typedef struct ProcessRequest {
   enum ProcessState state;
 } ProcessRequest;
 
-int64_t testProcesses(uint64_t argc, char *argv[]) {
+uint64_t testProcesses(uint64_t argc, char *argv[]) {
   uint8_t requestIndex;
   uint8_t aliveCount = 0;
   uint8_t action;

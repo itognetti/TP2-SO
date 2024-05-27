@@ -1,7 +1,6 @@
 #ifndef TEST_SYNC_H
 #define TEST_SYNC_H
 
-#include <stdio.h>
 #include <testUtils.h>
 #include <syscalls.h>
 #include <libIO.h>

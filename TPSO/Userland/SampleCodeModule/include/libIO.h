@@ -5,7 +5,6 @@
 #include "../include/syscalls.h"
 #include <date.h>
 #include <stdlib.h>
-#include <stdio.h>
 #include <colors.h>
 #include <inttypes.h>
 #include <string.h>
@@ -24,5 +23,6 @@ void scanf(char *buffer, int bufferSize);
 void printTime(date currentDate);
 int getRandomSign();  
 char * int64ToStringConverter(int64_t number);
+void invertedString(char * string, int len);
 
 #endif
