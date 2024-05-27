@@ -2,7 +2,7 @@
 #define DATE_H
 
 #define BUFFER_SIZE 25
-#define STDIN 0
+#define STDIN 1
 #define STDOUT 1
 
 typedef struct dateData {

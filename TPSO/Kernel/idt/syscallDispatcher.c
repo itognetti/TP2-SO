@@ -3,10 +3,10 @@
 void syscallDispatcher(uint64_t id, uint64_t param1, uint64_t param2, uint64_t param3, uint64_t param4){
     switch(id){
         case SYS_WRITE:
-            sys_write((char *) param1, (int) param2, (int) param3, (int) param4);
+            sys_write_to_stdout((char *) param1, (int) param2, (int) param3, (int) param4);
             break;
         case SYS_READ:
-            sys_read((char *) param1, (int) param2);
+            sys_read((int) param1, (char *) param2, (int) param3);
             break;
         case SYS_CLEAR:
             sys_clear();

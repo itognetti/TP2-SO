@@ -8,9 +8,9 @@
 #include <pong.h>
 
 #define BUFFER_SIZE 25
-#define STDIN 0
+#define STDIN 1
 #define STDOUT 1
-#define MODULES 7
+#define MODULES 9
 
 typedef struct{
     char * name;

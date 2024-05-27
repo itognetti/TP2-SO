@@ -16,7 +16,7 @@
 #include <childProcess.h>
 
 #define BACKGROUND 0
-#define STDIN 0
+#define STDIN 1
 #define STDOUT 1
 #define STDERR 2
 
@@ -50,14 +50,16 @@
 #define SYS_PAUSE_OR_UNPAUSE_PROC 22
 #define SYS_KILL_PROC 23
 
-void sys_write(char * string, int row, int col, int color);
-void sys_read(char *buffer, int length);
+void sys_write(int fd, char * string, int row, int col, int color);
+void sys_read(int fd, char *buffer, int length);
 void sys_clear();
 void sys_time();
 void sys_holder(int time);
 void sys_beep(uint32_t beepTime);
 void sys_info_reg();
 void sys_draw(int row, int col, int color);
+
+void sys_write_to_stdout(char *buffer, int row, int col, int color);
 
 void sys_allocate_memory(uint64_t length);
 void sys_destroy_pipe(unsigned int pipeId);

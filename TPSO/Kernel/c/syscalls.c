@@ -1,16 +1,39 @@
 #include "../include/syscalls.h"
 
-void sys_write(char * string, int row, int col, int color){//no las modifique ya estaban de antes
-    if(row == -1 || col == -1){
-        print(string, color);
-    }
-    else{
-        printIn(string, row, col, color);
+void sys_write_to_stdout(char *buffer, int row, int col, int color){    // while coding
+    sys_write(STDOUT, buffer, row, col, color);
+}
+
+void sys_write(int fd, char * string, int row, int col, int color){
+    switch (fd){
+        case BACKGROUND:
+            break;
+        case STDERR:
+            if(row == -1 || col == -1){
+                print(string, RED);
+            }
+            else {
+                printIn(string, row, col, color);
+            }
+            break;
+        case STDOUT:
+            if(row == -1 || col == -1){
+                print(string, color);
+            }
+            else {
+                printIn(string, row, col, color);
+            }
+            break;
+        default:
+            writeToPipe(fd, string, strlen(string));
     }
 }
 
-void sys_read(char *buffer, int length){
-    readKeyboard(buffer, length);
+void sys_read(int fd, char *buffer, int length){
+    if (fd == STDIN){
+        readKeyboard(buffer, length);
+    }
+    readFromPipe(fd, buffer, length);
 }
 
 void sys_clear(){

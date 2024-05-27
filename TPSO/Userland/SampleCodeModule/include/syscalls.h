@@ -7,7 +7,7 @@
 #include <stddef.h>
 
 #define BACKGROUND 0
-#define STDIN 0
+#define STDIN 1
 #define STDOUT 1
 #define STDERR 2
 
@@ -44,7 +44,7 @@
 extern uint64_t _syscall(uint64_t syscall, ...);
 
 void write(char *string, int row, int col, int color);
-void read(char *buffer, int length);
+void read(int fd, char *buffer, int length);
 void clearScreen();
 void getTime(date currentDate);
 void hold(int time);
