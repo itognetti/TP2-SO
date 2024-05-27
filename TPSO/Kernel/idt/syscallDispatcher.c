@@ -31,7 +31,7 @@ void syscallDispatcher(uint64_t id, uint64_t param1, uint64_t param2, uint64_t p
             break;
         case SYS_FREE:
             sys_free((void *) param1);
-            return 0;
+            break;
         case SYS_DESTROY_PIPE:
             sys_destroy_pipe((unsigned int) param1);
             break;

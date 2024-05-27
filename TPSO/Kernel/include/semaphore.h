@@ -5,6 +5,7 @@
 #include <interrupts.h>
 #include <types.h>
 #include <queue.h>
+#include <locks.h>
 
 #define MAX_SEM 40
 #define MAX_PROCESS 20

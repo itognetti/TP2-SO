@@ -12,7 +12,7 @@
 #define OFFSET_PTR(ptr, num) ((uint64_t) (ptr) + (num))
 #define HP_ST ((void *) 0xA00000)  // 10 Mb
 #define HP_SI 0x100000  // 1Mb   
-#define HP_E ((void *) (SUM_PTR(HP_ST, HP_SI)))
+#define HP_E ((void *) (OFFSET_PTR(HP_ST, HP_SI)))
  
 
 void m_free(void * ptr);

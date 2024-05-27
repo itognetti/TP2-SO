@@ -82,11 +82,11 @@ uint64_t sys_free(void * pointer) {
 }
 
 void sys_get_pid(){
-    getCurrentPid();
+    getCurrentPID();
 }
 
 uint64_t sysTerminateProcess(unsigned int processId) {
-    return RemoveTask(processId);
+    return removeTask(processId);
 }
 
 uint64_t sysGetMemoryStatus(uint64_t * buffer){
@@ -119,7 +119,7 @@ void sys_register_child_process(uint64_t entryPoint, uint8_t input, uint8_t outp
 }
 
 void sys_create_pipe_available(){
-    createPipeAvailable();
+    createAvailablePipe();
 }
 
 void sys_create_pipe(unsigned int pipeId){

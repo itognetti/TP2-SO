@@ -24,7 +24,7 @@ void * m_malloc(uint64_t length){
         return NULL;
     }
     addBlock(freeBlock, roundedSize);
-    return (void *) SUM_PTR(freeBlock, HEADER_SIZE);
+    return (void *) OFFSET_PTR(freeBlock, HEADER_SIZE);
 
 }
 
@@ -33,7 +33,7 @@ void m_free(void * block) {
         return;
     }
 
-    header_t * header = (header_t *) SUM_PTR(block, -HEADER_SIZE);
+    header_t * header = (header_t *) OFFSET_PTR(block, -HEADER_SIZE);
 
     uint64_t blockSize = GET_SIZE(header->size);
     mem_st.allocatedBytes -= blockSize;
@@ -43,14 +43,14 @@ void m_free(void * block) {
     freeBlock(header);
 }
 
-memStatus  * get_st(){
+memStatus  * m_status(){
     return &mem_st; 
 }
 
 void freeBlock(header_t * block) {
     block->allocated = FALSE;
 
-    header_t * nextBlock = (header_t *) SUM_PTR(block, block->size);
+    header_t * nextBlock = (header_t *) OFFSET_PTR(block, block->size);
     if(!nextBlock->allocated) {
         block->size += nextBlock->size;
     }
@@ -60,11 +60,11 @@ header_t * findFree(uint64_t length) {
      header_t * currentBlock = (header_t *) HP_ST;
 
      while(!IS_EOL(currentBlock->size) && (currentBlock->allocated || GET_SIZE(currentBlock->size) < length)) {
-         currentBlock = (header_t *) SUM_PTR(currentBlock, GET_SIZE(currentBlock->size));
+         currentBlock = (header_t *) OFFSET_PTR(currentBlock, GET_SIZE(currentBlock->size));
      }
 
      if(IS_EOL(currentBlock->size)) {
-         if(SUM_PTR(currentBlock, length + EOL_SIZE) > (uint64_t) HP_E) {
+         if(OFFSET_PTR(currentBlock, length + EOL_SIZE) > (uint64_t) HP_E) {
             return NULL;
          }
      }
@@ -81,7 +81,7 @@ void addBlock(header_t *block, uint64_t newSize) {
 
     if (IS_EOL(block->size)) {
         // Add EOL marker after the new block
-        header_t *eolBlock = (header_t *) SUM_PTR(block, newSize);
+        header_t *eolBlock = (header_t *) OFFSET_PTR(block, newSize);
         addEOL(eolBlock);
 
         block->size = newSize;
@@ -90,7 +90,7 @@ void addBlock(header_t *block, uint64_t newSize) {
         mem_st.allocatedBytes += newSize;
         mem_st.freeBytes -= newSize;
     } else if (newSize + MIN_REQUEST < originalSize) {  // Split the block
-        header_t *newFreeBlock = (header_t *) SUM_PTR(block, newSize);
+        header_t *newFreeBlock = (header_t *) OFFSET_PTR(block, newSize);
         block->size = newSize;
         block->allocated = TRUE;
 
