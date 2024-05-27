@@ -16,8 +16,6 @@ typedef struct waitData {
     uint8_t state;
 } waitData;
 
-static waitData taskList[MAX_WAIT_TASKS] = {{0}};
-
 uint8_t hasChildren(unsigned int pid);
 void addChildren(unsigned int fatherPid, unsigned int childPid);
 void removeChildren(unsigned int pid);

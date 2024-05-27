@@ -1,5 +1,7 @@
 #include <childProcess.h>
 
+static waitData taskList[MAX_WAIT_TASKS] = {{0}};
+
 uint8_t hasChildren(unsigned int pid){
     for(int i = 0; i < MAX_WAIT_TASKS; i++){
         if(taskList[i].fatherPid == pid){

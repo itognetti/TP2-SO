@@ -29,9 +29,6 @@ typedef struct pipeRecord{
 	uint8_t eof;
 }pipeRecord;
 
-static pipeRecord pipeList[MAX_PIPES];
-static unsigned int pipesQty = 0;
-
 int createPipe(unsigned int ID);
 int findPipe(unsigned int ID);
 int findAvailablePipe();

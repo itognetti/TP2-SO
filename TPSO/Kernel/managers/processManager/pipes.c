@@ -1,5 +1,8 @@
 #include <pipes.h>
 
+static pipeRecord pipeList[MAX_PIPES];
+static unsigned int pipesQty = 0;
+
 int createPipe(unsigned int id){
 	if(id == 0)				
 		return INVALID_PIPE_ID;

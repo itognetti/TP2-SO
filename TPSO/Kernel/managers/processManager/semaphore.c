@@ -1,5 +1,8 @@
 #include "../../include/semaphore.h"
 
+static semaphoreData semaphoreList[MAX_SEM] = {{0}};
+static unsigned int activeSem = 0;
+
 int createSemaphore(unsigned int id, unsigned int value){
 	if(id == 0){
 		return INVALID_SEM_ID_ERROR;

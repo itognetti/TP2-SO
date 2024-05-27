@@ -27,9 +27,6 @@ typedef struct semaphoreData{
 	queueData queue;
 }semaphoreData;
 
-static semaphoreData semaphoreList[MAX_SEM] = {{0}};
-static unsigned int activeSem = 0;
-
 int createSemaphore(unsigned int id, unsigned int value);
 void destroySemaphore(unsigned int id);
 int findSemaphore(unsigned int id);

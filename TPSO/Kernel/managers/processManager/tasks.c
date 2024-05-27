@@ -1,5 +1,17 @@
 #include "../include/tasks.h"
 
+static PCB tasks[TOTAL_TASKS];
+
+static unsigned int newPID = 1;					// process identifier
+	
+static unsigned int currentTask = 0;
+static unsigned int currentRemainingTicks = 0;			// amount of timer ticks remaining for the current process
+static unsigned int currentDimTasks = 0;
+
+static unsigned int idleTaskPID = 1;
+
+static char * idleArg[] = {"idle", NULL};
+
 void idleTask(){
 	while(true)
 		_hlt();

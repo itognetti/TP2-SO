@@ -75,18 +75,6 @@ typedef struct PCB{ //Process Control Block
 		uint64_t ticks;					// amount of times the scheduler picked it to run
 }PCB;
 
-static PCB tasks[TOTAL_TASKS];
-
-static unsigned int newPID = 1;					// process identifier
-	
-static unsigned int currentTask = 0;
-static unsigned int currentRemainingTicks = 0;			// amount of timer ticks remaining for the current process
-static unsigned int currentDimTasks = 0;
-
-static unsigned int idleTaskPID = 1;
-
-static char * idleArg[] = {"idle", NULL};
-
 void idleTask();
 void enableMultiTasking();
 
