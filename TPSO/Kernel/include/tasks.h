@@ -44,7 +44,7 @@
 										/*		 -=-=STACK=-=-		*/
 #define STACK_POINT_OF_ENTRY (21*8)   	/*  	|	RAX, RBX  |		*/
 										/*  	|	RCX, etc  |		*/   
-#define RDI_POS   (12*8)				/*		---------------		*/ 
+#define RDI_POS   (13*8)				/*		---------------		*/ 
 #define IP_POS    (6*8)					/*  	|	 RIP	  |		*/				
 #define CS_POS 	  (5*8)					/*  	|	  CS	  |		*/
 #define FLAGS_POS (4*8)					/*  	|	 RFLAGS	  |		*/
@@ -96,11 +96,13 @@ void changeStateIf(uint8_t old_state, uint8_t new_state);
 void changeState(unsigned int PID, uint8_t new_state);
 void pauseScreenProcess(unsigned int screen);
 void killScreenProcesses();
+void pauseScreenProcess(unsigned int screen);
 int pauseOrUnpauseProcess(unsigned int pid);
 int removeTask(unsigned int PID);
 unsigned int changePriority(unsigned int PID, int delta);
 uint8_t enoughTimeLeft();
 uint64_t nextTask(uint64_t stackPointer, uint64_t stackSegment);
 int getProcessInfo(processInfo * info);
+void listProcess();
 
 #endif

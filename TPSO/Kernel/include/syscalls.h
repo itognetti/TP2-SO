@@ -55,6 +55,12 @@
 
 #define SYS_NICE 26
 
+#define MAX_MEM_POS 0x7FFFFFFFF		
+#define MIN_MEM_POS 0x400000
+#define INVALID_MEM_POS -1
+#define MAX_MEM_READ 16
+#define BYTE_LENGTH 2
+
 void sys_write(int fd, char * string, int row, int col, int color);
 void sys_read(int fd, char *buffer, int length);
 void sys_clear();

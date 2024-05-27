@@ -4,7 +4,9 @@
 #include <naiveConsole.h>
 #include <videoDriver.h>
 #include <idtLoader.h>
-
+#include "./include/syscalls.h"
+#include <tasks.h>
+#include <memoryManager.h>
 extern uint8_t text;
 extern uint8_t rodata;
 extern uint8_t data;
@@ -16,6 +18,7 @@ static const uint64_t PageSize = 0x1000;
 
 static void * const sampleCodeModuleAddress = (void*)0x400000;
 static void * const sampleDataModuleAddress = (void*)0x500000;
+static char * shellArg[] = {"shell", NULL};
 
 typedef int (*EntryPoint)();
 
@@ -85,9 +88,18 @@ int main()
 {	
   load_idt();
   // saveInitialConditions((uint64_t) sampleCodeModuleAddress);
+  /*
   ((EntryPoint) sampleCodeModuleAddress)();
   while(1){
 		_hlt(); //espera: instrucc q frena cpu hasta recibir interrup externas (HW)
 	}
+  */
+  clearScreen();
+
+	mm_init();
+
+	addTask((uint64_t) sampleCodeModuleAddress,STDIN, STDOUT,DEFAULT_PRIORITY, IMMORTAL, shellArg);	// llamada a userland
+
+	enableMultiTasking();
   return 0;
 }

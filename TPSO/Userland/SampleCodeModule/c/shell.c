@@ -10,7 +10,9 @@ modules module[] = {
     {"clear", "           -    Clears the screen", clear},
     {"testMemoryManager","-    Test memory manager", testMemoryManager},
     {"testProcess","      -    Test process management", testProcesses},
-    {"testPriorities","   -    Test priorities", testPriorities}
+    {"testPriorities","   -    Test priorities", testPriorities},
+    {"cat","            -    Writes in console what has been read", cat},
+    {"loop","           -    Loops while printing the process id every half a second",loop}
 };
 
 static char *starter = "$> ";
@@ -30,6 +32,13 @@ void initShell(){
     } 
 }
 
+void cat(){
+  int c;
+  while ((c = getChar()) != -1) { 
+      putChar(c); 
+  }
+}
+
 void callModule(char *buffer){
     println("");
     for(int i = 0; i < MODULES; i++){
@@ -41,7 +50,16 @@ void callModule(char *buffer){
     printf(buffer);
     println(": command not found, please enter 'help' for module list");
 }
-
+void loop(){
+	int pid = getPID();
+	char *buffer = " Process ID:";
+	while(1){
+		for(int i = 0; i < HALF_SECOND ; i++)
+			;
+		printf(" Process ID:");
+        printf(int64ToString(pid));
+	}	
+}
 void help(){
     for(int i = 0; i < MODULES; i++){
         printf("             ");

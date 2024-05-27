@@ -1,7 +1,9 @@
 #include "../include/syscalls.h"
 
 void sys_write_to_stdout(char *buffer, int row, int col, int color){    // while coding
-    sys_write(STDOUT, buffer, row, col, color);
+    //sys_write(STDOUT, buffer, row, col, color);
+    sys_write(getCurrentOutput(),buffer,row,col,color);
+
 }
 
 void sys_write(int fd, char * string, int row, int col, int color){
@@ -60,10 +62,24 @@ void sys_draw(int row, int col, int color){
     putPixel(row, col, color);
 }
 
-void sys_allocate_memory(uint64_t length) {
-    (uint64_t) m_malloc(length);
+uint64_t  sys_allocate_memory(uint64_t length) {
+	return (uint64_t) mm_malloc(length);
 }
+unsigned int sys_print_mem(uint64_t pos, char * buffer) {
+   	if( !(pos >= MIN_MEM_POS && pos < MAX_MEM_POS) ){
+		return INVALID_MEM_POS;
+    }
+	uint64_t current;
 
+	for(int i = 0, j = 0; i < MAX_MEM_READ; i++) {
+		if(i != 0 && i % 4 == 0) {
+			buffer[j++] = ' ';
+    }
+    current = *((uint8_t * ) pos + i);
+    j += hexToString(current, buffer + j, BYTE_LENGTH);
+	}
+	return 0;
+}
 uint64_t sysChangeProcessPriority(uint8_t processId, int priorityChange){
     return changePriority(processId, priorityChange);
 }
