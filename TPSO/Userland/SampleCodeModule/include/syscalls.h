@@ -34,6 +34,9 @@
 
 #define SYS_GET_PID 21
 
+#define SYS_PAUSE_OR_UNPAUSE_PROC 22
+#define SYS_KILL_PROC 23
+
 extern uint64_t _syscall(uint64_t syscall, ...);
 
 void write(char *string, int row, int col, int color);
@@ -59,5 +62,7 @@ uint64_t registerSemaphoreAvailable(unsigned int val);
 uint64_t getPid();
 uint64_t waitChildren();
 uint64_t registerChildProcess(uint64_t entryP, uint8_t input, uint8_t output, uint64_t arg0);
+uint64_t killProcess(unsigned int processPid);
+uint64_t pauseOrUnpauseProcess(unsigned int processPid);
 
 #endif

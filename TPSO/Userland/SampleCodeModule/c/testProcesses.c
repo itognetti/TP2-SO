@@ -1,11 +1,8 @@
-#include <stdio.h>
 #include "./include/syscalls.h"
 #include "./include/testUtils.h"
 #include "./include/shell.h"
 
-enum ProcessState { RUNNING,
-                    BLOCKED,
-                    KILLED };
+enum ProcessState { RUNNING, BLOCKED, KILLED };
 
 typedef struct ProcessRequest {
   int32_t processId;
@@ -17,7 +14,7 @@ int64_t testProcesses(uint64_t argc, char *argv[]) {
   uint8_t aliveCount = 0;
   uint8_t action;
   uint64_t maxProcesses;
-  char *emptyArguments[] = {NULL};
+  char *emptyArguments[] = {0};
 
   if (argc != 1)
     return -1;
@@ -28,11 +25,10 @@ int64_t testProcesses(uint64_t argc, char *argv[]) {
   ProcessRequest processRequests[maxProcesses];
 
   while (1) {
-
-  
     for (requestIndex = 0; requestIndex < maxProcesses; requestIndex++) {
+      processRequests[requestIndex].processId = registerChildProcess((uint64_t) &endlessLoop, 1, 1, (uint64_t) emptyArguments);
       if (processRequests[requestIndex].processId == -1) {
-        printf("testProcesses: ERROR creating process\n");
+        printf("testProcesses: error while creating a process\n");
         return -1;
       } else {
         processRequests[requestIndex].state = RUNNING;
@@ -42,12 +38,15 @@ int64_t testProcesses(uint64_t argc, char *argv[]) {
 
     while (aliveCount > 0) {
       for (requestIndex = 0; requestIndex < maxProcesses; requestIndex++) {
-        action = getUniform(100) % 2;
+        action = generateUniformRandom(100) % 2;
 
         switch (action) {
           case 0:
             if (processRequests[requestIndex].state == RUNNING || processRequests[requestIndex].state == BLOCKED) {
-                //
+              if(killProcess(processRequests[requestIndex].processId) == -1){
+                printf("testProcesses: error while killing a process\n");
+                return -1;
+              }
               processRequests[requestIndex].state = KILLED;
               aliveCount--;
             }
@@ -55,7 +54,10 @@ int64_t testProcesses(uint64_t argc, char *argv[]) {
 
           case 1:
             if (processRequests[requestIndex].state == RUNNING) {
-                //
+                if(pauseOrUnpauseProcess(processRequests[requestIndex].processId) == -1){
+                  printf("testProcesses: error while blocking a process\n");
+                  return -1;    
+                }
               processRequests[requestIndex].state = BLOCKED;
             }
             break;
@@ -64,8 +66,11 @@ int64_t testProcesses(uint64_t argc, char *argv[]) {
 
       // Desbloquea procesos aleatoriamente
       for (requestIndex = 0; requestIndex < maxProcesses; requestIndex++)
-        if (processRequests[requestIndex].state == BLOCKED && getUniform(100) % 2) {
-         //
+        if (processRequests[requestIndex].state == BLOCKED && generateUniformRandom(100) % 2) {
+          if(pauseOrUnpauseProcess(processRequests[requestIndex].processId) == -1){
+            printf("testProcesses: error while unblocking a process\n");
+            return -1;
+          }
           processRequests[requestIndex].state = RUNNING;
         }
     }

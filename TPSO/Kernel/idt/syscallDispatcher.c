@@ -68,5 +68,11 @@ void syscallDispatcher(uint64_t id, uint64_t param1, uint64_t param2, uint64_t p
         case SYS_GET_PID:
             sys_get_pid();
             break;
+        case SYS_PAUSE_OR_UNPAUSE_PROC:
+            sys_pause_and_unpause_process((unsigned int) param1);
+            break;
+        case SYS_KILL_PROC:
+            sys_kill_process((unsigned int) param1);
+            break;
     }
 }

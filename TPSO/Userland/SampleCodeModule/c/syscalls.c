@@ -87,3 +87,11 @@ uint64_t waitChildren(){
 uint64_t registerChildProcess(uint64_t entryP, uint8_t input, uint8_t output, uint64_t arg0){
     return _syscall(SYS_CHILD_PROC_REGISTER);
 }
+
+uint64_t killProcess(unsigned int processPid){
+    return _syscall(SYS_KILL_PROC, processPid);
+}
+
+uint64_t pauseOrUnpauseProcess(unsigned int processPid){
+    return _syscall(SYS_PAUSE_OR_UNPAUSE_PROC, processPid);
+}

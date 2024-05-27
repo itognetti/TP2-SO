@@ -139,3 +139,11 @@ void sys_wait_sem(unsigned int semaphoreId){
 void sys_write_to_pipe(unsigned int pipeId, const char * source, unsigned int count){
     writeToPipe(pipeId, source, count);
 }
+
+void sys_kill_process(unsigned int processPid){
+    removeTask(processPid);
+}
+
+void sys_pause_and_unpause_process(unsigned int processPid){
+    pauseOrUnpauseProcess(processPid);
+}

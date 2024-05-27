@@ -47,6 +47,9 @@
 
 #define SYS_GET_PID 21
 
+#define SYS_PAUSE_OR_UNPAUSE_PROC 22
+#define SYS_KILL_PROC 23
+
 void sys_write(char * string, int row, int col, int color);
 void sys_read(char *buffer, int length);
 void sys_clear();
@@ -70,5 +73,7 @@ void sys_create_sem_available(unsigned int initialValue);
 void sys_register_child_process(uint64_t entryPoint, uint8_t input, uint8_t output, char ** arg0);
 void sys_wait_for_children();
 void sys_get_pid();
+void sys_kill_process(unsigned int processPid);
+void sys_pause_and_unpause_process(unsigned int processPid);
 
 #endif
