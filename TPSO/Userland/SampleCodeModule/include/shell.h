@@ -13,6 +13,9 @@
 #define MODULES 14
 #define HALF_SECOND 500000000
 
+#define IS_VOWEL(c) ((c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u' || \
+                     c == 'A' || c == 'E' || c == 'I' || c == 'O' || c == 'U'))
+
 typedef struct{
     char * name;
     char * description;

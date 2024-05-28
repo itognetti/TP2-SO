@@ -110,16 +110,16 @@ void wc(){
 }
 
 void filter(){
-    int i, j = 0;
+    int j = 0;
     char buff[BUFFER_SIZE] = {0};
     char output[BUFFER_SIZE] = {0};
     char c;
 
     output[j++] = '\n';
     scanf(buff, BUFFER_SIZE);
-    for(int i = 0; buff[i] == 0 || i < BUFFER_SIZE; i++){
+    for(int i = 0; buff[i] == '\0' || i < BUFFER_SIZE; i++){
         c = buff[i];
-        if(c != 'a' && c != 'e' && c != 'i' && c != 'o' && c != 'u'){
+        if(!IS_VOWEL(c)){
             output[j++] = c;
         }
     }

@@ -46,7 +46,7 @@ void endlessLoopPrint(uint64_t wait) {
   }
 }
 
-int64_t satoi(const char *str) {
+int64_t satoi(char *str) {
     uint64_t index = 0;
     int64_t result = 0;
     int8_t sign = 1;

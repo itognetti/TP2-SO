@@ -23,29 +23,29 @@ void testPriorities(){
     pids[i] = registerChildProcess((uint64_t) &endlessLoopPrint, 1, 1, (uint64_t) argv);
 
   bussyWait(WAIT);
-  printf("\nCHANGING PRIORITIES...\n");
+  printf("\nChanging priorities...\n");
 
   for (i = 0; i < TOTAL_PROCESSES; i++)
     niceProcess(pids[i], priorities[i]);
 
   bussyWait(WAIT);
-  printf("\nBLOCKING...\n");
+  printf("\nBlocking...\n");
 
   for (i = 0; i < TOTAL_PROCESSES; i++)
-    pauseProcess(pids[i]);
+    pauseOrUnpauseProcess(pids[i]);
 
-  printf("CHANGING PRIORITIES WHILE BLOCKED...\n");
+  printf("Changing priorities while blocked...\n");
 
   for (i = 0; i < TOTAL_PROCESSES; i++)
       niceProcess(pids[i], MEDIUM);
 
-  printf("UNBLOCKING...\n");
+  printf("Unblocking...\n");
 
   for (i = 0; i < TOTAL_PROCESSES; i++)
-    pauseProcess(pids[i]);
+    pauseOrUnpauseProcess(pids[i]);
 
   bussyWait(WAIT);
-  printf("\nKILLING...\n");
+  printf("\nKilling...\n");
 
   for (i = 0; i < TOTAL_PROCESSES; i++)
     killProcess(pids[i]);
