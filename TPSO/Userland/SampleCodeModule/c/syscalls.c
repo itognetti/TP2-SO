@@ -37,7 +37,7 @@ uint64_t alloc(int len){
 }
 
 uint64_t freeMem(void * ptr){
-    return _syscall(SYS_FREE, (uint64_t) ptr, NULL, NULL, NULL);
+    return _syscall(SYS_FREE, ptr);
 }
 
 uint64_t readPipe(int pipeId, char * dest, int count){
@@ -49,7 +49,7 @@ uint64_t writePipe(int pipeId, const char * src, int count){
 }
 
 uint64_t pipeInfo(pipesInfo* info){
-    return _syscall(SYS_PIPE_INFO, info);
+    return _syscall(SYS_INFO_PIPE, info);
 }
 
 void destroyPipe( int pipeId){
@@ -64,8 +64,8 @@ uint64_t signalSemaphore(uint64_t semId){
     return _syscall(SYS_SEM_SIGNAL, semId);
 }
 
-uint64_t destroySemaphore(uint64_t semId){
-    return _syscall(SYS_SEM_DESTROY, semId);
+void destroySemaphore(uint64_t semId){
+    _syscall(SYS_SEM_DESTROY, semId);
 }
 
 uint64_t waitSemaphore(uint64_t semId){
@@ -84,11 +84,11 @@ uint64_t getPid(){
     return _syscall(SYS_GET_PID);
 }
 
-uint64_t waitChildren(){
-    return _syscall(SYS_CHILD_WAIT);
+void waitChildren(){
+    _syscall(SYS_CHILD_WAIT);
 }
 
-uint64_t registerChildProcess(uint64_t entryP, uint8_t input, uint8_t output, uint64_t arg0){
+uint64_t registerChildProcess(uint64_t entryP, uint8_t input, uint8_t output, char ** arg0){
     return _syscall(SYS_CHILD_PROC_REGISTER);
 }
 
@@ -100,8 +100,8 @@ uint64_t pauseOrUnpauseProcess(unsigned int processPid){
     return _syscall(SYS_PAUSE_OR_UNPAUSE_PROC, processPid);
 }
 
-uint64_t registerProcess(uint64_t entrypoint, uint8_t input, uint8_t output, uint64_t arg0){
-    return _syscall(SYS_REGISTER_PROC, (uint64_t) entrypoint, (uint64_t) input, (uint64_t) output, arg0);
+uint64_t registerProcess(uint64_t entrypoint, uint8_t input, uint8_t output, char ** arg0){
+    return _syscall(SYS_REGISTER_PROC, entrypoint, input, output, arg0);
 }
 
 uint64_t niceProcess(uint8_t pid, int delta){
