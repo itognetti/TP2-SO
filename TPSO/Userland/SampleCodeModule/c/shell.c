@@ -1,18 +1,18 @@
 #include <shell.h>
 
 modules module[] = {
-    {"help", "            -    Displays the module list", help},
-    {"divzero", "         -    Throws Divide by Zero exception", divZero},
-    {"invopcode", "       -    Throws Invalid Operation Code exception", invOpCode},
-    {"time", "            -    Displays the systems current time", time},
-    {"pong", "            -    Loads Pong game", pong},
-    {"inforeg", "         -    Displays the registers state", infoReg},
-    {"clear", "           -    Clears the screen", clear},
-    {"testMemoryManager","-    Test memory manager", testMemoryManager},
-    {"testProcess","      -    Test process management", testProcesses},
-    {"testPriorities","   -    Test priorities", testPriorities},
-    {"cat","            -    Writes in console what has been read", cat},
-    {"loop","           -    Loops while printing the process id every half a second",loop}
+    {"help", "              -    Displays the module list", help},
+    {"divzero", "           -    Throws Divide by Zero exception", divZero},
+    {"invopcode", "         -    Throws Invalid Operation Code exception", invOpCode},
+    {"time", "              -    Displays the systems current time", time},
+    {"pong", "              -    Loads Pong game", pong},
+    {"inforeg", "           -    Displays the registers state", infoReg},
+    {"clear", "             -    Clears the screen", clear},
+    {"testMemoryManager","  -    Test memory manager", testMemoryManager},
+    {"testProcess","        -    Test process management", testProcesses},
+    {"testPriorities","     -    Test priorities", testPriorities},
+    {"cat","                -    Writes in console what has been read", cat},
+    {"loop","               -    Loops while printing the process id every half a second", loop}
 };
 
 static char *starter = "$> ";
@@ -50,16 +50,16 @@ void callModule(char *buffer){
     printf(buffer);
     println(": command not found, please enter 'help' for module list");
 }
+
 void loop(){
-	int pid = getPID();
-	char *buffer = " Process ID:";
+	int pid = getPid();
 	while(1){
-		for(int i = 0; i < HALF_SECOND ; i++)
-			;
-		printf(" Process ID:");
-        printf(int64ToString(pid));
+		for(int i = 0; i < HALF_SECOND ; i++);
+		printf("Process ID:");
+        printf(int64ToStringConverter(pid));
 	}	
 }
+
 void help(){
     for(int i = 0; i < MODULES; i++){
         printf("             ");

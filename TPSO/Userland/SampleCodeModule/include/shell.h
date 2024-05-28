@@ -37,5 +37,7 @@ void testProcesses(char *argv[]);
 void testPriorities();
 
 // TODO add functions (cat, wc, etc.)
+void cat();
+void loop();
 
 #endif
