@@ -1,6 +1,6 @@
-#include "./include/syscalls.h"
-#include "./include/testUtils.h"
-#include "./include/shell.h"
+#include "../include/syscalls.h"
+#include "../include/testUtils.h"
+#include "../include/shell.h"
 
 enum ProcessState { RUNNING, BLOCKED, KILLED };
 

@@ -8,11 +8,13 @@ modules module[] = {
     {"pong", "              -    Loads Pong game", pong},
     {"inforeg", "           -    Displays the registers state", infoReg},
     {"clear", "             -    Clears the screen", clear},
-    {"testMemoryManager","  -    Test memory manager", testMemoryManager},
-    {"testProcess","        -    Test process management", testProcesses},
-    {"testPriorities","     -    Test priorities", testPriorities},
-    {"cat","                -    Writes in console what has been read", cat},
-    {"loop","               -    Loops while printing the process id every half a second", loop}
+    {"testMemoryManager", " -    Test memory manager", testMemoryManager},
+    {"testProcess", "       -    Test process management", testProcesses},
+    {"testPriorities", "    -    Test priorities", testPriorities},
+    {"loop", "              -    Prints its process id with a greeting every certain amount of seconds", loop},
+    {"cat", "               -    Prints the stdin as it receives it", cat},
+    {"wc", "                -    Counts the number of lines in the input", wc},
+    {"filter", "            -    Filters the vowels from the input", filter}
 };
 
 static char *starter = "$> ";
@@ -32,13 +34,6 @@ void initShell(){
     } 
 }
 
-void cat(){
-  int c;
-  while ((c = getChar()) != -1) { 
-      putChar(c); 
-  }
-}
-
 void callModule(char *buffer){
     println("");
     for(int i = 0; i < MODULES; i++){
@@ -49,15 +44,6 @@ void callModule(char *buffer){
     }
     printf(buffer);
     println(": command not found, please enter 'help' for module list");
-}
-
-void loop(){
-	int pid = getPid();
-	while(1){
-		for(int i = 0; i < HALF_SECOND ; i++);
-		printf("Process ID:");
-        printf(int64ToStringConverter(pid));
-	}	
 }
 
 void help(){
@@ -93,4 +79,49 @@ void infoReg(){
 
 void clear(){
     clearScreen();
+}
+
+void loop(){
+	int pid = getPid();
+	while(1){
+		for(int i = 0; i < HALF_SECOND ; i++);
+		printf("Process ID:");
+        println(int64ToStringConverter(pid));
+	}	
+}
+
+void cat(){
+    char buff[BUFFER_SIZE] = {0};
+    scanf(buff, BUFFER_SIZE);
+    printf(buff);
+}
+
+void wc(){
+    char c;
+    int linesCount = 0;
+    while((c = getChar()) != -1){
+        if(c == '\n'){
+            linesCount++;
+        }
+        putChar(c);
+    }
+    printf("Total input lines: ");
+    printf(int64ToStringConverter(linesCount));
+}
+
+void filter(){
+    int i, j = 0;
+    char buff[BUFFER_SIZE] = {0};
+    char output[BUFFER_SIZE] = {0};
+    char c;
+
+    output[j++] = '\n';
+    scanf(buff, BUFFER_SIZE);
+    for(int i = 0; buff[i] == 0 || i < BUFFER_SIZE; i++){
+        c = buff[i];
+        if(c != 'a' && c != 'e' && c != 'i' && c != 'o' && c != 'u'){
+            output[j++] = c;
+        }
+    }
+    println(output);
 }

@@ -10,7 +10,7 @@
 #define BUFFER_SIZE 25
 #define STDIN 1
 #define STDOUT 1
-#define MODULES 12
+#define MODULES 14
 #define HALF_SECOND 500000000
 
 typedef struct{
@@ -36,8 +36,9 @@ void testMemoryManager();
 void testProcesses(char *argv[]);
 void testPriorities();
 
-// TODO add functions (cat, wc, etc.)
-void cat();
 void loop();
+void cat();
+void wc();
+void filter();
 
 #endif
