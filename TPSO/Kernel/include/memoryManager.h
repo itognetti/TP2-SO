@@ -2,6 +2,8 @@
 #define _MEM_MANAGER_H_
 
 #include <stdint.h>
+#include "../include/mm_impl.h"
+#include <stddef.h>
 #include <stdlib.h>
 #include <mm_utils.h>
 

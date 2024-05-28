@@ -96,7 +96,7 @@ int main()
   */
   clearScreen();
 
-	mm_init();
+	m_init();
 
 	addTask((uint64_t) sampleCodeModuleAddress,STDIN, STDOUT,DEFAULT_PRIORITY, IMMORTAL, shellArg);	// llamada a userland
 

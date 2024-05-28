@@ -1,13 +1,7 @@
 #ifndef USE_BUDDY
 #include "../include/memoryManager.h"
-#include "../include/mm_impl.h"
-#include <stddef.h>
 
 static memStatus mem_st={0};
-
-memStatus  * get_st(){
-    return &mem_st; 
-}
 
 void m_init(){
     mem_st.freeBytes = HP_SI; 
@@ -107,6 +101,13 @@ void addBlock(header_t *block, uint64_t newSize) {
         mem_st.freeBytes -= originalSize;
     }
     mem_st.allocatedBlocks += 1;
+}
+
+void printMemStatus(uint64_t * buffer){
+    memStatus * memStat = m_status();
+    buffer[0] = memStat->allocatedBytes;
+    buffer[1] = memStat->freeBytes;
+    buffer[2] = memStat->allocatedBytes;
 }
 
 #endif

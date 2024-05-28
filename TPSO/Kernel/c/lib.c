@@ -49,7 +49,7 @@ void * memcpy(void * destination, const void * source, uint64_t length)
 	return destination;
 }
 
-void reverse_array(char *str, int len) {
+void reverseString(char *str, int len) {
     char temp;
     for (int start = 0, end = len - 1; start < end; start++, end--) {
         temp = str[start];
@@ -58,21 +58,21 @@ void reverse_array(char *str, int len) {
     }
 }
 
-int convert_hex_to_string(uint64_t number, char *output_buffer, int min_length) {
+int hexToString(uint64_t number, char *buffer, int length) {
     int index = 0;
 
     for (int remainder; number > 0; index++, number /= 16) {
         remainder = number % 16;
         if (remainder < 10)
-            output_buffer[index] = remainder + '0';
+            buffer[index] = remainder + '0';
         else
-            output_buffer[index] = remainder - 10 + 'A';
+            buffer[index] = remainder - 10 + 'A';
     }
-    while (index < min_length) {
-        output_buffer[index++] = '0';
+    while (index < length) {
+        buffer[index++] = '0';
     }
-    reverse_array(output_buffer, index);
-    output_buffer[index] = '\0';
+    reverseString(buffer, index);
+    buffer[index] = '\0';
 
     return index;
 }
