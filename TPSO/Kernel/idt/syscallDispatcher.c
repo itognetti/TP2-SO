@@ -73,7 +73,7 @@ uint64_t syscallDispatcher(uint64_t id, uint64_t param1, uint64_t param2, uint64
         case SYS_ALIVE_PROC:
             return sys_alive_process((unsigned int) param1);
         case SYS_PAUSE_OR_UNPAUSE_PROC:
-            return sys_pause_and_unpause_process((unsigned int) param1);
+            return sys_pause_or_unpause_process((unsigned int) param1);
         case SYS_INFO_PROC:
             return sys_info_process((processInfo *) param1);
         case SYS_KILL_PROC:

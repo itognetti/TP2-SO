@@ -71,17 +71,18 @@ uint64_t sys_memory_man_status(uint64_t * buffer){
 }
 
 unsigned int sys_print_memory(uint64_t pos, char * buffer) {
-   	if( !(pos >= MIN_MEM_POS && pos < MAX_MEM_POS) ){
+   	if(!(pos >= MIN_MEM_POS && pos < MAX_MEM_POS)){
 		return INVALID_MEM_POS;
     }
+
 	uint64_t current;
 
 	for(int i = 0, j = 0; i < MAX_MEM_READ; i++) {
 		if(i != 0 && i % 4 == 0) {
 			buffer[j++] = ' ';
-    }
-    current = *((uint8_t * ) pos + i);
-    j += hexToString(current, buffer + j, BYTE_LENGTH);
+        }
+        current = *((uint8_t * ) pos + i);
+        j += hexToString(current, buffer + j, BYTE_LENGTH);
 	}
 	return 0;
 }
@@ -154,7 +155,7 @@ uint64_t sys_register_process(uint64_t entryPoint, uint8_t input, uint8_t output
     return addTask(entryPoint, input, output, DEFAULT_PRIORITY, MORTAL, arg0);
 }
 
-uint64_t sys_pause_and_unpause_process(unsigned int processPid){
+uint64_t sys_pause_or_unpause_process(unsigned int processPid){
     return pauseOrUnpauseProcess(processPid);
 }
 

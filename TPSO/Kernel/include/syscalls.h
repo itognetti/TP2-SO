@@ -98,7 +98,7 @@ uint64_t sys_register_child_process(uint64_t entryPoint, uint8_t input, uint8_t 
 void sys_wait_for_children();
 uint64_t sys_get_pid();
 uint64_t sys_kill_process(unsigned int processPid);
-uint64_t sys_pause_and_unpause_process(unsigned int processPid);
+uint64_t sys_pause_or_unpause_process(unsigned int processPid);
 uint64_t sys_info_process(processInfo * info);
 uint64_t sys_alive_process(unsigned int processPid);
 uint64_t sys_register_process(uint64_t entryPoint, uint8_t input, uint8_t output, char ** arg0);

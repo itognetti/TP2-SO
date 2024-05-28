@@ -129,7 +129,7 @@ picSlaveMask:
     pop     rbp
     retn
 
-enable_multitasking:
+initiateMultitasking:
   mov BYTE [multitaskingEnabled], 1
   jmp tickHandle
 
@@ -138,19 +138,19 @@ _irq00Handler:
 	;irqHandlerMaster 0
   pushState
   cmp BYTE [multitaskingEnabled], 1
-  jne enable_multitasking
+  jne initiateMultitasking
 
   call enoughTimeLeft
   cmp rax, 1
   je tickHandle
 
-  switchTask:
+switchTask:
   mov rdi, rsp
   mov rsi, ss
   call nextTask
   mov rsp,rax
 
-  tickHandle:
+tickHandle:
   mov rdi, 0
   call irqDispatcher
 
@@ -220,5 +220,5 @@ triggerTimerTick:
   int 20h
   ret
 
-  SECTION .data
-  multitaskingEnabled db 0
+SECTION .data
+	multitaskingEnabled db 0
