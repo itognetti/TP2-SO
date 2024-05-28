@@ -1,7 +1,6 @@
 #include "../include/syscalls.h"
 
 void sys_write_to_stdout(char *buffer, int row, int col, int color){    // while coding
-    //sys_write(STDOUT, buffer, row, col, color);
     sys_write(getCurrentOutput(),buffer,row,col,color);
 
 }

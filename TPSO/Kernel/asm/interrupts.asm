@@ -16,11 +16,11 @@ GLOBAL _syscallHandler
 GLOBAL _exception0Handler
 GLOBAL _exception6Handler
 
-
 GLOBAL inb
 GLOBAL outb
-GLOBAL forceCurrentTask
-GLOBAL forceTimerTick
+GLOBAL executeCurrentTask
+GLOBAL triggerTimerTick
+
 EXTERN irqDispatcher
 EXTERN exceptionDispatcher
 EXTERN syscallDispatcher
@@ -48,7 +48,6 @@ SECTION .text
 	push r15
 %endmacro
 
-
 %macro popState 0
 	pop r15
 	pop r14
@@ -67,7 +66,6 @@ SECTION .text
 	pop rax
 %endmacro
 
-
 %macro irqHandlerMaster 1
 	pushState
 
@@ -82,7 +80,6 @@ SECTION .text
 	popState
 	iretq
 %endmacro
-
 
 %macro exceptionHandler 1
 	pushState
@@ -112,7 +109,6 @@ _cli:
 	cli
 	ret
 
-
 _sti:
 	sti
 	ret
@@ -132,6 +128,7 @@ picSlaveMask:
     out	0A1h,al
     pop     rbp
     retn
+
 enable_multitasking:
   mov BYTE [multitaskingEnabled], 1
   jmp tickHandle
@@ -162,7 +159,6 @@ _irq00Handler:
 
   popState
   iretq
-
 
 ;Keyboard
 _irq01Handler:
@@ -213,13 +209,14 @@ outb:
     out dx, al
     leave
     ret
-forceCurrentTask:
+
+executeCurrentTask:
   call getRSP
   mov rsp,rax
   popState
   iretq
 
-forceTimerTick:
+triggerTimerTick:
   int 20h
   ret
 

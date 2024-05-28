@@ -20,7 +20,7 @@ void idleTask(){
 void enableMultiTasking(){
 	idleTaskPID = addTask((uint64_t)&idleTask, STDIN, BACKGROUND, DEFAULT_PRIORITY, IMMORTAL,idleArg);
 	changeState(idleTaskPID, PAUSED_PROCESS);		// pause until it's required
-	forceCurrentTask();
+	executeCurrentTask();
 }
 
 unsigned int getCurrentPID(){
@@ -62,7 +62,7 @@ uint64_t buildStack(uint64_t entrypoint, char ** arg0, uint64_t stackEnd){
 	*(STACK_POS(RDI_POS)) = (uint64_t) arg0;
 
 	for(int i = 7 ; i < 21 ; i++){
-		if(i != 12)
+		if(i != 13)
 			*(STACK_POS(i * 8)) = 0;
 	}
 
@@ -147,23 +147,23 @@ void removeCurrentTask(){
 
 void forceChangeTask(){
 	currentRemainingTicks = tasks[currentTask].priority + 1;
-	forceTimerTick();
+	triggerTimerTick();
 }
 
-void changeStateIf(uint8_t old_state, uint8_t new_state){
+void changeStateIf(uint8_t oldState, uint8_t newState){
 	for(int i = 0; i < TOTAL_TASKS; i++){
-		if(tasks[i].state != DEAD_PROCESS && tasks[i].state == old_state){
-			tasks[i].state = new_state;
+		if(tasks[i].state != DEAD_PROCESS && tasks[i].state == oldState){
+			tasks[i].state = newState;
 		}
 	}
 }
 
-void changeState(unsigned int PID, uint8_t new_state){
+void changeState(unsigned int PID, uint8_t newState){
 	int pos = findTask(PID);
 	if(pos == NO_TASK_FOUND)
 		return;
 
-	tasks[pos].state = new_state;
+	tasks[pos].state = newState;
 }
 
 void pauseScreenProcess(unsigned int screen){

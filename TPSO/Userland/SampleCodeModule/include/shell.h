@@ -10,7 +10,7 @@
 #define BUFFER_SIZE 25
 #define STDIN 1
 #define STDOUT 1
-#define MODULES 11
+#define MODULES 12
 #define HALF_SECOND 500000000
 
 typedef struct{
