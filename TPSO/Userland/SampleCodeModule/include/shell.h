@@ -19,12 +19,20 @@
 typedef struct{
     char * name;
     char * description;
-    void (*function)();
+    uint64_t function;
+    int args;
+    int pipe;
 } modules;
 
 extern void invalidOperationCode();
 
 void * memset(void * destiny, int32_t c, uint64_t length);
+unsigned int validateProgram(char * string);
+char ** createProgramParams(char ** words, unsigned int len);
+int handlePipeCommand(char ** words, unsigned int amount_of_words);
+void handleProcess(char ** words, unsigned int amount_of_words);
+int userCommandParser(char ** command, char readBuf[BUFFER_SIZE]);
+
 
 void initShell();
 void callModule(char *buffer);

@@ -18,7 +18,14 @@ int strcmp(const char *str1, const char *str2) {
     }
     return (str1[i] - str2[i]);
 }
-
+int strncpy(char * dest, const char * src, unsigned int n){
+    int i=0;
+    for(; src[i]!=0 && i<n; i++){
+        dest[i] = src[i];
+    }
+    dest[i] = 0;
+    return i;
+}
 char * reverse(char* str, int length) {
     int start = 0;
     int end = length - 1;

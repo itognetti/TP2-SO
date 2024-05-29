@@ -25,5 +25,6 @@ extern unsigned char getPressedKey();
 
 void keyboardHandler();
 void readKeyboard(char * buffer, int length);
+void cleanInputBuffer();
 
 #endif
