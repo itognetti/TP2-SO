@@ -24,5 +24,7 @@ void printTime(date currentDate);
 int getRandomSign();  
 char * int64ToStringConverter(int64_t number);
 void invertedString(char * string, int len);
+int atoi(char * string);
+int isNum(char * string);
 
 #endif

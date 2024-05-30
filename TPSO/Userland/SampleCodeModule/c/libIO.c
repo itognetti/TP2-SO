@@ -110,3 +110,24 @@ int getRandomSign() {
     seed = (seed * 1103515245 + 12345) % 2147483648;     // Generación del número pseudoaleatorio
     return (seed % 2 == 0) ? 1 : -1;    // Devuelve 1 si es par, -1 si es impar
 }
+
+uint64_t atoi( char * string) {
+    uint64_t result = 0;
+
+    for(int i = 0 ; string[i] ; i++) {
+        result = result*10 + string[i] - '0';
+    }
+
+    return result;
+}
+
+int isNum(char * str) {
+    int i = 0;
+    while (str[i] != 0) {
+        if (str[i] <= '0' || str[i] >= '9') {
+            return 0; 
+        }
+        i++;
+    }
+    return 1;
+}
