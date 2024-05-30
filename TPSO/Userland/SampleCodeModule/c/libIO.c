@@ -42,7 +42,7 @@ void deleteChar(){
 void scanf(char *buffer, int bufferSize) {
     char c;
     int bufferDim = 0;
-    while(((c = getChar()) != '\n') && bufferDim < bufferSize){
+    while(((c = getChar()) != '\n' && c != -1) && bufferDim < bufferSize){
         if(c != 0){
             if(c == '\b'){
                 if(bufferDim > 0){

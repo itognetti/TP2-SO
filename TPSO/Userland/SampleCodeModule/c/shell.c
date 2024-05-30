@@ -17,20 +17,20 @@
 #define MIN_VALUE(a, b) ((a) <= (b) ? (a) : (b))
 
 modules module[] = {
-    {"help", "          -    Displays the module list", (uint64_t)&help,0,0},
-    {"divzero", "       -    Throws Divide by Zero exception",(uint64_t) &divZero,0,0},
-    {"invopcode", "     -    Throws Invalid Operation Code exception",(uint64_t) &invOpCode,0,0},
-    {"time", "          -    Displays the systems current time",(uint64_t) &time,0,0},
-    {"pong", "          -    Loads Pong game",(uint64_t) &pong,0,0},
-    {"inforeg", "       -    Displays the registers state",(uint64_t) &infoReg,0,0},
-    {"clear", "         -    Clears the screen",(uint64_t) &clear,0,0},
-    {"testMm","         -    Test memory manager",(uint64_t) &testMemoryManager ,0,0},
-    {"testProcesses","  -    Test process management",(uint64_t) &testProcesses,1,0},
-    {"testPriorities"," -    Test priorities",(uint64_t) &testPriorities,0,0},
-    {"cat","            -    Writes in console what has been read",(uint64_t) &cat,0,0},
-    {"loop","           -    Loops while printing the process id every half a second",(uint64_t) &loop,0,0},
-    {"wc","             -    Counts the lines in what has been written in screen",(uint64_t) &wc,0,0},
-    {"filter","         -    Filters what has been written and only shows consonants",(uint64_t) &filter,0,1}
+    {"help", "            -    Displays the module list", (uint64_t)&help,0,0},
+    {"divzero", "         -    Throws Divide by Zero exception",(uint64_t) &divZero,0,0},
+    {"invopcode", "       -    Throws Invalid Operation Code exception",(uint64_t) &invOpCode,0,0},
+    {"time", "            -    Displays the systems current time",(uint64_t) &time,0,0},
+    {"pong", "            -    Loads Pong game",(uint64_t) &pong,0,0},
+    {"inforeg", "         -    Displays the registers state",(uint64_t) &infoReg,0,0},
+    {"clear", "           -    Clears the screen",(uint64_t) &clear,0,0},
+    {"testMemoryManager","-    Test memory manager",(uint64_t) &testMemoryManager ,0,0},
+    {"testProcesses","    -    Test process management",(uint64_t) &testProcesses,1,0},
+    {"testPriorities","   -    Test priorities",(uint64_t) &testPriorities,0,0},
+    {"cat","              -    Writes in console what has been read",(uint64_t) &cat,0,1},
+    {"loop","             -    Loops while printing the process id every half a second",(uint64_t) &loop,0,1},
+    {"wc","               -    Counts the lines in what has been written in screen",(uint64_t) &wc,0,0},
+    {"filter","           -    Filters what has been written and only shows consonants",(uint64_t) &filter,0,1}
 };
 
 static char *starter = "$> ";
@@ -183,7 +183,7 @@ void  handleProcess(char ** words, unsigned int amount_of_words){
 
     int i;
     for(i=module[program_pos].args + 1; i < amount_of_words; i++){
-        if(strcmp(";", words[i]) == 0){ 
+        if(strcmp("&", words[i]) == 0){ 
             registerChildProcess(module[program_pos].function, STDIN, BACKGROUND, make_params(words, MIN(i-1,module[program_pos].args))); //Run on Background
             return; 
         }
@@ -231,7 +231,7 @@ void loop(){
 void cat(){
     char buff[BUFFER_SIZE] = {0};
     scanf(buff, BUFFER_SIZE);
-    printf(buff);
+    println(buff);
 }
 
 void wc(){
@@ -244,7 +244,7 @@ void wc(){
         putChar(c);
     }
     printf("Total input lines: ");
-    printf(int64ToStringConverter(linesCount));
+    println(int64ToStringConverter(linesCount));
 }
 
 void filter(){

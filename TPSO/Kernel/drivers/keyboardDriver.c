@@ -1,5 +1,6 @@
 #include <keyboardDriver.h>
 #include <syscalls.h>
+
 char buffer[BUFFER_DIM] = {0};
 int previous = 0;
 int current = 0;
@@ -39,7 +40,7 @@ void keyboardHandler(uint64_t *rsp) {
             ctrlPressed = 1;
             break;
         case CTRL + RELEASED_KEY:
-            ctrlPressed = 1;
+            ctrlPressed = 0;
             break;
         case ALT:
             break;
@@ -53,16 +54,15 @@ void keyboardHandler(uint64_t *rsp) {
                     if (keyboardMap[scan_code][secondChar] == 'R' || keyboardMap[scan_code][secondChar] == 'r') {
                         saveRegistersState(rsp);
                     }
-                         if (keyboardMap[scan_code][secondChar] == 'D' || keyboardMap[scan_code][secondChar] == 'd') {
+                    if (keyboardMap[scan_code][secondChar] == 'D' || keyboardMap[scan_code][secondChar] == 'd') {
                         buffer[current++] = EOF;
-                        ctrlPressed = 0;
-                        putChar('A',GREEN);
+                        putChar("", BLACK);
+                        return;
                     }
                     if (keyboardMap[scan_code][secondChar] == 'C' || keyboardMap[scan_code][secondChar] == 'c') {
                         cleanKeyboardBuffer();
                         killScreenProcesses();
-
-                        ctrlPressed = 0;
+                        return;
                     }
                     return;
                 }

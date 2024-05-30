@@ -5,6 +5,7 @@
 #include <registers.h>
 
 #define BUFFER_DIM 10
+#define BUFFER_SIZE 256
 #define KEY_COUNT 256
 
 #define ESC 0x01
@@ -23,7 +24,7 @@
 
 extern unsigned char getPressedKey();
 
-void keyboardHandler();
+void keyboardHandler(uint64_t *rsp);
 void readKeyboard(char * buffer, int length);
 void cleanInputBuffer();
 

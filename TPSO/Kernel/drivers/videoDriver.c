@@ -171,7 +171,7 @@ void printIn(char *string, int row, int col, int color) {
 //Imprime a partir de la posicion actual del cursor (xPos, yPos)
 void print(char *string, int color){
     int length = strlen(string);
-    for (int i = 0; i < length; i++) {
+    for (int i = 0; i < length && string[i] != -1; i++) {
             putChar(string[i], color);
         }
 }
