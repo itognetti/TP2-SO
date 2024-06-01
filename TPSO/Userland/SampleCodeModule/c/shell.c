@@ -33,11 +33,55 @@ modules module[] = {
     {"wc","               -    Counts the lines in what has been written in screen",(uint64_t) &wc,0,0},
     {"filter","           -    Filters what has been written and only shows consonants",(uint64_t) &filter,0,1},
     {"kill","             -    Kills a process given its id",(uint64_t) &kill,1,0},
-    {"ps","               -    Shows every running process and its data",(uint64_t) &ps,0,0}
+    {"ps","               -    Shows every running process and its data",(uint64_t) &ps,0,0},
+    {"nice","             -  Changes the priority process  ",(uint64_t) &adjustPriority,2,0},
+    {"block","             - Pauses a process  ",(uint64_t) &blockProcess,1,0},
+    {"mem","             -   Displays the memory status",(uint64_t) &displayMemoryStatus,0,0}
 };
 
 static char *starter = "$> ";
 int firstInit = 1;
+
+
+void adjustPriority(char **args) {
+    if (!isNum(args[1]) && !isNum(args[2])) {
+        printf("Invalid argument! Arguments must be numbers.\n");
+        return;
+    }
+    unsigned int pid = _atoi(args[1]);
+    int priorityDelta = _atoi(args[2]);
+    adjustProcessPriority(pid, priorityDelta);
+}
+
+void blockProcess(char **args) {
+    if (!isNum(args[1])) {
+        printf("Invalid argument! Argument must be a number.\n");
+        return;
+    }
+    uint64_t pid = _atoi(args[1]);
+    pauseProcess((unsigned int)pid);
+    return;
+}
+
+static char *memoryInfoLabels[] = {"Allocated Bytes: ", "Free Bytes: ", "Allocated Blocks: "};
+
+void displayMemoryStatus() {
+    uint64_t memoryInfo[MEMINFO] = {0};
+    getMemoryStatus(memoryInfo);
+
+    printf("Total Memory: ");
+
+    char totalMemoryBuffer[BUFFER_SIZE] = {0};
+    _strncpy(totalMemoryBuffer, int64ToString(memoryInfo[0] + memoryInfo[1]), BUFFER_SIZE);
+    println(totalMemoryBuffer);
+
+    for (int i = 0; i < MEMINFO; i++) {
+        char infoBuffer[BUFFER_SIZE] = {0};
+        printf(memoryInfoLabels[i]);
+        _strncpy(infoBuffer, int64ToString(memoryInfo[i]), BUFFER_SIZE);
+        println(infoBuffer);
+    }
+}
 
 void initShell(){
     if(firstInit){
@@ -280,12 +324,12 @@ void ps(){
 
 	for(int i = 0; i < amount; i++){
 		printf("Name: ");
-        printf(info[i].name);
+        printf(info[i].processName);
         printf("\t| PID: ");
-        printf(int64ToString(info[i].ID));
+        printf(int64ToString(info[i].processId));
         printf("\t| State: ");
 
-        switch(info[i].state){
+        switch(info[i].processState){
             case ACTIVE_PROCESS: 
                 printf("Active\t| "); break;
             case PAUSED_PROCESS:
@@ -295,14 +339,14 @@ void ps(){
         }
 
         printf("Priority: ");
-        printf(int64ToString(info[i].priority));
+        printf(int64ToString(info[i].processPriority));
         printf("\t| Stack: ");
-        printf(int64ToString(info[i].stack));
+        printf(int64ToString(info[i].processStack));
         printf("\t| RSP: ");
-        printf(int64ToString(info[i].rsp));
+        printf(int64ToString(info[i].processRsp));
         printf("\t| Screen: ");
 
-        switch(info[i].screen) {
+        switch(info[i].processScreen) {
             case BACKGROUND:
                 printf("Background\n"); break;
             case STDOUT:

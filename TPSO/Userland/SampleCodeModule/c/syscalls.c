@@ -32,6 +32,10 @@ void putPixel(int row, int col, int color){
     _syscall(SYS_DRAW, row, col, color);
 }
 
+uint64_t memoryManStatus(uint64_t * buffer){
+    return _syscall(SYS_MEMORY_MAN_STATUS , buffer);
+}
+
 uint64_t alloc(int len){
     return _syscall(SYS_ALLOC, len);
 }
