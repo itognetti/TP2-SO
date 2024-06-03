@@ -51,7 +51,7 @@ int64_t satoi(char *str) {
     int64_t result = 0;
     int8_t sign = 1;
 
-    if (str == NULL) {
+    if (!str) {
         return 0;
     }
 

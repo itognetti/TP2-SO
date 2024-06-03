@@ -62,7 +62,7 @@ uint64_t buildStack(uint64_t entrypoint, char ** arg0, uint64_t stackEnd){
 	*(STACK_POS(RDI_POS)) = (uint64_t) arg0;
 
 	for(int i = 7 ; i < 21 ; i++){
-		if(i != 13)
+		if(i != 12)
 			*(STACK_POS(i * 8)) = 0;
 	}
 
