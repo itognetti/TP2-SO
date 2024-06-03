@@ -143,31 +143,34 @@ unsigned int validateProgram(char * string){
 }
 
 char **createProgramParams(char **words, unsigned int len) {
-    void * ptr = (void *) alloc((2 + len) * sizeof(char *));
+    void * ptr = (void*) alloc((2 + len) * sizeof(char *)); // + 1 for name, + 1 por null termination
 
     if(ptr == NULL){
-        printf(ERR_MEMORY_ALLOC);
+        printf(ERR_MEMORY_ALLOC);   
         return NULL;
     }
 
-    void * param;
-    int paramLength, index = 0;
     char ** params = (char **) ptr;
 
-    for( ; index <= len + 1; index++){
-        paramLength = strlen(words[index]) + 1;
-        param = (void *) alloc(paramLength);
+    void * param;
+    int paramLen;
 
-        if(param == NULL){
-            printf(ERR_MEMORY_ALLOC);
+    int i=0;
+    for(; i<=len + 1; i++){
+        paramLen = strlen(words[i]) + 1;
+        param = (void*) alloc(paramLen);
+
+         if(param == NULL){
+            printf(ERR_MEMORY_ALLOC);     
             return NULL;
         }
 
-        char * paramCopy = (char *) param;
-        _strncpy(paramCopy, words[index], paramLength);
-        params[index] = paramCopy;
+        char * param2 = (char *) param;
+
+        _strncpy(param2, words[i], paramLen);
+        params[i] = param2;
     }
-    params[index] = NULL;
+    params[i] = NULL;
     return params;
 }
 
@@ -227,8 +230,8 @@ void handleProcess(char ** words, unsigned int amount_of_words){
     }
     registerChildProcess(module[program_pos].function, STDIN, EXEC_FG, createProgramParams(words, MIN_VALUE(amount_of_words-1, module[program_pos].args))); 
     waitChildren();
-
 }
+
 void divZero(){
     int a = 1 /0 ;
 }

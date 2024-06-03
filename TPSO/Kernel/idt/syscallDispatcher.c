@@ -69,7 +69,7 @@ uint64_t syscallDispatcher(uint64_t id, uint64_t param1, uint64_t param2, uint64
         case SYS_GET_PID:
             return sys_get_pid();
         case SYS_REGISTER_PROC:
-            return sys_register_process((unsigned int) param1, (uint8_t) param2, (uint8_t) param3, (char**) param4);
+            return sys_register_process((uint64_t) param1, (uint8_t) param2, (uint8_t) param3, (char**) param4);
         case SYS_ALIVE_PROC:
             return sys_alive_process((unsigned int) param1);
         case SYS_PAUSE_OR_UNPAUSE_PROC:
