@@ -18,25 +18,26 @@
 #define MIN_VALUE(a, b) ((a) <= (b) ? (a) : (b))
 
 modules module[] = {
-    {"help", "            -    Displays the module list", (uint64_t)&help,0,0},
-    {"divzero", "         -    Throws Divide by Zero exception",(uint64_t) &divZero,0,0},
-    {"invopcode", "       -    Throws Invalid Operation Code exception",(uint64_t) &invOpCode,0,0},
-    {"time", "            -    Displays the systems current time",(uint64_t) &time,0,0},
-    {"pong", "            -    Loads Pong game",(uint64_t) &pong,0,0},
-    {"inforeg", "         -    Displays the registers state",(uint64_t) &infoReg,0,0},
-    {"clear", "           -    Clears the screen",(uint64_t) &clear,0,0},
-    {"testMemoryManager","-    Test memory manager",(uint64_t) &testMemoryManager ,0,0},
-    {"testProcesses","    -    Test process management",(uint64_t) &testProcesses,1,0},
-    {"testPriorities","   -    Test priorities",(uint64_t) &testPriorities,0,0},
-    {"cat","              -    Writes in console what has been read",(uint64_t) &cat,0,1},
-    {"loop","             -    Loops while printing the process id every half a second",(uint64_t) &loop,0,1},
-    {"wc","               -    Counts the lines in what has been written in screen",(uint64_t) &wc,0,0},
-    {"filter","           -    Filters what has been written and only shows consonants",(uint64_t) &filter,0,1},
-    {"kill","             -    Kills a process given its id",(uint64_t) &kill,1,0},
-    {"ps","               -    Shows every running process and its data",(uint64_t) &ps,0,0},
-    {"nice","             -    Changes the priority process",(uint64_t) &nice,2,0},
-    {"block","            -    Pauses a process",(uint64_t) &block,1,0},
-    {"mem","              -    Displays the memory status",(uint64_t) &displayMemoryStatus,0,0}
+    {"help","              -    Displays the module list", (uint64_t)&help,0,0},
+    {"divzero","           -    Throws Divide by Zero exception",(uint64_t) &divZero,0,0},
+    {"invopcode","         -    Throws Invalid Operation Code exception",(uint64_t) &invOpCode,0,0},
+    {"time","              -    Displays the systems current time",(uint64_t) &time,0,0},
+    {"pong","              -    Loads Pong game",(uint64_t) &pong,0,0},
+    {"inforeg","           -    Displays the registers state",(uint64_t) &infoReg,0,0},
+    {"clear","             -    Clears the screen",(uint64_t) &clear,0,0},
+    {"testMemoryManager"," -    Test memory manager",(uint64_t) &testMemoryManager ,0,0},
+    {"testProcesses","     -    Test process management",(uint64_t) &testProcesses,1,0},
+    {"testPriorities","    -    Test priorities",(uint64_t) &testPriorities,0,0},
+    {"mem","               -    Prints the memory status",(uint64_t) &displayMemoryStatus,0,0},
+    {"ps","                -    Shows every running process and its data",(uint64_t) &ps,0,0},
+    {"loop","              -    Prints its id with a greeting every a specified number of seconds",(uint64_t) &loop,0,1},
+    {"kill","              -    Kills a process given its id",(uint64_t) &kill,1,0},
+    {"nice","              -    Changes the priority process",(uint64_t) &nice,2,0},
+    {"block","             -    Changes the state of a process between blocked and ready given its id",(uint64_t) &block,1,0},    
+    {"cat","               -    Prints the stdin as it is received",(uint64_t) &cat,0,1},
+    {"wc","                -    Counts the number of lines in the input",(uint64_t) &wc,0,0},
+    {"filter","            -    Filters the vowels from the input",(uint64_t) &filter,0,1},
+    {"phylo","             -    Implements the dining philosophers problem",(uint64_t)&philo,0,0}
 };
 
 static char *starter = "$> ";

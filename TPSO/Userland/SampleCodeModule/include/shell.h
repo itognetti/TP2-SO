@@ -57,5 +57,6 @@ void ps();
 void kill(char ** args);
 void nice(char ** args);
 void block(char ** args);
+void philo();
 void displayMemoryStatus();
 #endif

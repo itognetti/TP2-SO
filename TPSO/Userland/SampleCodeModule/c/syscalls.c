@@ -93,7 +93,7 @@ void waitChildren(){
 }
 
 uint64_t registerChildProcess(uint64_t entryP, uint8_t input, uint8_t output, char ** arg0){
-    return _syscall(SYS_CHILD_PROC_REGISTER);
+    return _syscall(SYS_CHILD_PROC_REGISTER, entryP, input, output, arg0);
 }
 
 uint64_t killProcess(unsigned int processPid){
@@ -109,7 +109,7 @@ uint64_t registerProcess(uint64_t entrypoint, uint8_t input, uint8_t output, cha
 }
 
 uint64_t niceProcess(uint8_t pid, int delta){
-    return _syscall(SYS_NICE, pid, delta, NULL, NULL );
+    return _syscall(SYS_NICE, pid, delta);
 }
 
 uint64_t getProcessInfo(processInfo * info){
