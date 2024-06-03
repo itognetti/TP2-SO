@@ -43,7 +43,7 @@ void testMemoryManager(){
     // Initialize memory
     for (uint32_t i = 0; i < requestCount; i++) {
       if (memoryRequests[i].address) {
-        memset(memoryRequests[i].address, i, memoryRequests[i].size);
+        _memset(memoryRequests[i].address, i, memoryRequests[i].size);
       }
     }
 

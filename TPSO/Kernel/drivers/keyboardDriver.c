@@ -56,11 +56,11 @@ void keyboardHandler(uint64_t *rsp) {
                     }
                     if (keyboardMap[scan_code][secondChar] == 'D' || keyboardMap[scan_code][secondChar] == 'd') {
                         buffer[current++] = EOF;
-                        putChar("", BLACK);
+                        println(" ", BLACK);
                         return;
                     }
                     if (keyboardMap[scan_code][secondChar] == 'C' || keyboardMap[scan_code][secondChar] == 'c') {
-                        cleanKeyboardBuffer();
+                        cleanInputBuffer();
                         killScreenProcesses();
                         return;
                     }

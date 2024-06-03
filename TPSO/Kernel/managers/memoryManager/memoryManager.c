@@ -37,7 +37,7 @@ void m_free(void * block) {
     freeBlock(header);
 }
 
-memStatus  * m_status(){
+memStatus * m_status(){
     return &mem_st; 
 }
 

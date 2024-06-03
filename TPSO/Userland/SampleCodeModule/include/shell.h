@@ -6,6 +6,7 @@
 #include <date.h>
 #include <string.h>
 #include <pong.h>
+#include "loader.h"
 
 #define BUFFER_SIZE 25
 #define STDIN 1
@@ -29,13 +30,11 @@ typedef struct{
 
 extern void invalidOperationCode();
 
-void * memset(void * destiny, int32_t c, uint64_t length);
 unsigned int validateProgram(char * string);
 char ** createProgramParams(char ** words, unsigned int len);
 int handlePipeCommand(char ** words, unsigned int amount_of_words);
 void handleProcess(char ** words, unsigned int amount_of_words);
 int userCommandParser(char ** command, char readBuf[BUFFER_SIZE]);
-
 
 void initShell();
 void callModule(char *buffer);
@@ -54,7 +53,9 @@ void loop();
 void cat();
 void wc();
 void filter();
-void adjustPriority(char ** args);
-void blockProcess(char ** args);
+void ps();
+void kill(char ** args);
+void nice(char ** args);
+void block(char ** args);
 void displayMemoryStatus();
 #endif

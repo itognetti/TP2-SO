@@ -1,4 +1,4 @@
-#include "../includes/philo.h"
+#include "../include/philo.h"
 
 void philo() {
     end = FALSE;
@@ -42,12 +42,12 @@ void addPhilo(){
         char ** philos = { 0 };
 
         char ** args = (char **) alloc(3 * sizeof(char *));
-        char * buf = int64ToString(currentCount);
+        char * buf = int64ToStringConverter(currentCount);
 
         args[0] = (char *) (intptr_t) strncpy(args[0], string, 12);
         args[1] = buf;
         philos = args;
-        PIDS[currentCount] = registerChildProcess((uint64_t) &philosopher, STDIN, FOREGROUND, (uint64_t) philos);
+        PIDS[currentCount] = registerChildProcess((uint64_t) &philosopher, STDIN, FOREGROUND, philos);
         if(PIDS[currentCount] <= 0) {
             println("Error creating philosopher");
             return;
@@ -75,7 +75,7 @@ void removePhilo(){
 }
 
 void philosopher(char ** num){
-    int i = (int) atoi(num[1]);
+    int i = (int) _atoi(num[1]);
     while(!end) {
         waitSemaphore(safe[i]);
         think();

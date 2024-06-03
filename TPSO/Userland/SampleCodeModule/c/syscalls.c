@@ -111,3 +111,15 @@ uint64_t registerProcess(uint64_t entrypoint, uint8_t input, uint8_t output, cha
 uint64_t niceProcess(uint8_t pid, int delta){
     return _syscall(SYS_NICE, pid, delta, NULL, NULL );
 }
+
+uint64_t getProcessInfo(processInfo * info){
+    return _syscall(SYS_INFO_PROC, info);
+}
+
+uint64_t printMem(uint64_t pos, char * buffer){
+    return _syscall(SYS_PRINT_MEMORY, pos, buffer);
+}
+
+uint64_t registerPipe(unsigned int pipeId){
+    return _syscall(SYS_REGISTER_PIPE, pipeId);
+}

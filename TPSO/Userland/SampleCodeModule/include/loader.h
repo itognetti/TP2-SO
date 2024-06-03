@@ -4,6 +4,6 @@
 #include <stdint.h>
 
 int main();
-void * memset(void * destiny, int32_t c, uint64_t length);
+void * _memset(void * destiny, int32_t c, uint64_t length);
 
 #endif

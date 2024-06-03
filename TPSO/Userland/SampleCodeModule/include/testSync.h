@@ -14,4 +14,6 @@
 // shared mem
 int64_t global;
 
+uint64_t testSynchronization(uint64_t argCount, char *args[]);
+
 #endif

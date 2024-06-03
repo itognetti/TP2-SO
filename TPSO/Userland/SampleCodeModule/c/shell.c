@@ -34,32 +34,31 @@ modules module[] = {
     {"filter","           -    Filters what has been written and only shows consonants",(uint64_t) &filter,0,1},
     {"kill","             -    Kills a process given its id",(uint64_t) &kill,1,0},
     {"ps","               -    Shows every running process and its data",(uint64_t) &ps,0,0},
-    {"nice","             -  Changes the priority process  ",(uint64_t) &adjustPriority,2,0},
-    {"block","             - Pauses a process  ",(uint64_t) &blockProcess,1,0},
-    {"mem","             -   Displays the memory status",(uint64_t) &displayMemoryStatus,0,0}
+    {"nice","             -    Changes the priority process",(uint64_t) &nice,2,0},
+    {"block","            -    Pauses a process",(uint64_t) &block,1,0},
+    {"mem","              -    Displays the memory status",(uint64_t) &displayMemoryStatus,0,0}
 };
 
 static char *starter = "$> ";
 int firstInit = 1;
 
-
-void adjustPriority(char **args) {
+void nice(char **args) {
     if (!isNum(args[1]) && !isNum(args[2])) {
         printf("Invalid argument! Arguments must be numbers.\n");
         return;
     }
     unsigned int pid = _atoi(args[1]);
     int priorityDelta = _atoi(args[2]);
-    adjustProcessPriority(pid, priorityDelta);
+    niceProcess(pid, priorityDelta);
 }
 
-void blockProcess(char **args) {
+void block(char **args) {
     if (!isNum(args[1])) {
         printf("Invalid argument! Argument must be a number.\n");
         return;
     }
     uint64_t pid = _atoi(args[1]);
-    pauseProcess((unsigned int)pid);
+    pauseOrUnpauseProcess((unsigned int)pid);
     return;
 }
 
@@ -67,18 +66,18 @@ static char *memoryInfoLabels[] = {"Allocated Bytes: ", "Free Bytes: ", "Allocat
 
 void displayMemoryStatus() {
     uint64_t memoryInfo[MEMINFO] = {0};
-    getMemoryStatus(memoryInfo);
+    memoryManStatus(memoryInfo);
 
     printf("Total Memory: ");
 
     char totalMemoryBuffer[BUFFER_SIZE] = {0};
-    _strncpy(totalMemoryBuffer, int64ToString(memoryInfo[0] + memoryInfo[1]), BUFFER_SIZE);
+    _strncpy(totalMemoryBuffer, int64ToStringConverter(memoryInfo[0] + memoryInfo[1]), BUFFER_SIZE);
     println(totalMemoryBuffer);
 
     for (int i = 0; i < MEMINFO; i++) {
         char infoBuffer[BUFFER_SIZE] = {0};
         printf(memoryInfoLabels[i]);
-        _strncpy(infoBuffer, int64ToString(memoryInfo[i]), BUFFER_SIZE);
+        _strncpy(infoBuffer, int64ToStringConverter(memoryInfo[i]), BUFFER_SIZE);
         println(infoBuffer);
     }
 }
@@ -93,30 +92,17 @@ void initShell(){
     while(1){
         printColored(starter, GREEN);
         scanf(buffer, BUFFER_SIZE);
-        int commandWords = parseCommand(command, buffer);
+        int commandWords = userCommandParser(command, buffer);
         println("");
         if(commandWords == 0)
           continue;
 
-        if(piped_process_handle(command,commandWords) == 0){
-          single_process_handle(command,commandWords);
+        if(handlePipeCommand(command,commandWords) == 0){
+          handleProcess(command,commandWords);
         }
-        memset(buffer, 0, BUFFER_SIZE);
+        _memset(buffer, 0, BUFFER_SIZE);
     } 
 }
-/*
-void callModule(char *buffer){
-    println("");
-    for(int i = 0; i < MODULES; i++){
-        if(strcmp(buffer, module[i].name) == 0){
-            module[i].function();
-            return;
-        }
-    }
-    printf(buffer);
-    println(": command not found, please enter 'help' for module list");
-}
-*/
 
 void help(){
     for(int i = 0; i < MODULES; i++){
@@ -126,22 +112,25 @@ void help(){
     }
 }
 
-int userCommandParser(char **command, char buffer[BUFFER_SIZE], int maxCommandWords) {
-    int commandWords = 0;
-    int postSpace = 1; 
-    int index = 0;
-    while (commandWords < maxCommandWords && buffer[index] != '\n' && buffer[index] != '\0') {
-        if (isspace((unsigned char)buffer[index])) { 
-            postSpace = 1;
-            buffer[index] = '\0'; 
-        } else if (postSpace) { 
-            command[commandWords++] = buffer + index; 
-            postSpace = 0;
+int userCommandParser(char **command, char buffer[BUFFER_SIZE]) {
+    int i = 0, commandWords = 0;
+	
+	for(int postSpace = 1; commandWords < MAX_CMD_WORDS && buffer[i] != '\n' && buffer[i] != 0; i++) {
+        if(buffer[i]==-1){
+            buffer[i]=0;
+            return commandWords;
         }
-        index++;
-    }
-    buffer[index] = '\0'; 
-    return commandWords;
+        if(buffer[i] == ' ') {
+          postSpace = 1;
+          buffer[i] = 0;
+        } else if(postSpace) {
+          command[commandWords++] = buffer + i; 
+          postSpace = 0;
+        }
+	}
+
+  buffer[i] = 0;
+  return commandWords;
 }
 
 unsigned int validateProgram(char * string){
@@ -153,29 +142,32 @@ unsigned int validateProgram(char * string){
     return -1;
 }
 
-
 char **createProgramParams(char **words, unsigned int len) {
-    size_t total_len = 0;
-    for (int i = 0; i < len; i++) {
-        total_len += strlen(words[i]) + 1; 
-    }
+    void * ptr = (void *) alloc((2 + len) * sizeof(char *));
 
-    void *ptr = alloc((len + 1) * sizeof(char *) + total_len);
-    if (ptr == NULL) {
+    if(ptr == NULL){
         printf(ERR_MEMORY_ALLOC);
         return NULL;
     }
 
-    char *param_mem = (char *)ptr + (len + 1) * sizeof(char *);
+    void * param;
+    int paramLength, index = 0;
+    char ** params = (char **) ptr;
 
-    char **params = (char **)ptr;
-    for (int i = 0; i < len; i++) {
-        params[i] = param_mem;
-        strcpy(param_mem, words[i]); 
-        param_mem += strlen(words[i]) + 1; 
+    for( ; index <= len + 1; index++){
+        paramLength = strlen(words[index]) + 1;
+        param = (void *) alloc(paramLength);
+
+        if(param == NULL){
+            printf(ERR_MEMORY_ALLOC);
+            return NULL;
+        }
+
+        char * paramCopy = (char *) param;
+        _strncpy(paramCopy, words[index], paramLength);
+        params[index] = paramCopy;
     }
-    params[len] = NULL; 
-
+    params[index] = NULL;
     return params;
 }
 
@@ -184,8 +176,8 @@ int handlePipeCommand(char **words, unsigned int amount_of_words) {
         return 0; 
     }
 
-    unsigned int p1 = check_valid_program(words[0]);
-    unsigned int p2 = check_valid_program(words[2]);
+    unsigned int p1 = validateProgram(words[0]);
+    unsigned int p2 = validateProgram(words[2]);
   
     if (p1 == INVALID_PID_CODE || p2 == INVALID_PID_CODE) {
         printf(ERR_INVALID_COMMAND);
@@ -198,18 +190,14 @@ int handlePipeCommand(char **words, unsigned int amount_of_words) {
     }
     
     int pipe_id = registerPipeAvailable();
+
     if (pipe_id <= 0) {
         printf("Error creating pipe!");
         return 1;
     }
 
-    char **params = make_params(words, 0);
-    if (params == NULL) {
-        return 1;
-    }
-
-    registerChildProcess(module[p1].function, STDIN, pipe_id, params);
-    registerChildProcess(module[p2].function, pipe_id, EXEC_FG, params);
+    registerChildProcess(module[p1].function, STDIN, pipe_id, createProgramParams(words, 0));
+    registerChildProcess(module[p2].function, pipe_id, EXEC_FG, createProgramParams(words, 0));
 
     waitChildren();
 
@@ -217,8 +205,9 @@ int handlePipeCommand(char **words, unsigned int amount_of_words) {
 
     return 2; 
 }
-void  handleProcess(char ** words, unsigned int amount_of_words){
-    unsigned int program_pos = check_valid_program(words[0]);
+
+void handleProcess(char ** words, unsigned int amount_of_words){
+    unsigned int program_pos = validateProgram(words[0]);
 
     if(program_pos == -1){
         printf(ERR_INVALID_COMMAND);
@@ -232,11 +221,11 @@ void  handleProcess(char ** words, unsigned int amount_of_words){
     int i;
     for(i=module[program_pos].args + 1; i < amount_of_words; i++){
         if(strcmp("&", words[i]) == 0){ 
-            registerChildProcess(module[program_pos].function, STDIN, BACKGROUND, make_params(words, MIN(i-1,module[program_pos].args))); //Run on Background
+            registerProcess(module[program_pos].function, STDIN, BACKGROUND, createProgramParams(words, MIN_VALUE(i-1,module[program_pos].args))); //Run on Background
             return; 
         }
     }
-    registerChildProcess(module[program_pos].function, STDIN, EXEC_FG, make_params(words, MIN(amount_of_words-1, module[program_pos].args))); 
+    registerChildProcess(module[program_pos].function, STDIN, EXEC_FG, createProgramParams(words, MIN_VALUE(amount_of_words-1, module[program_pos].args))); 
     waitChildren();
 
 }
@@ -326,7 +315,7 @@ void ps(){
 		printf("Name: ");
         printf(info[i].processName);
         printf("\t| PID: ");
-        printf(int64ToString(info[i].processId));
+        printf(int64ToStringConverter(info[i].processId));
         printf("\t| State: ");
 
         switch(info[i].processState){
@@ -339,11 +328,11 @@ void ps(){
         }
 
         printf("Priority: ");
-        printf(int64ToString(info[i].processPriority));
+        printf(int64ToStringConverter(info[i].processPriority));
         printf("\t| Stack: ");
-        printf(int64ToString(info[i].processStack));
+        printf(int64ToStringConverter(info[i].processStack));
         printf("\t| RSP: ");
-        printf(int64ToString(info[i].processRsp));
+        printf(int64ToStringConverter(info[i].processRsp));
         printf("\t| Screen: ");
 
         switch(info[i].processScreen) {
@@ -355,10 +344,8 @@ void ps(){
                 printf("Pipe\n"); break;
         }
 	}
-
 	freeMem((void*)info);
 }
-
 
 void kill(char ** args){
   if(!isNum(args[1])) { 
@@ -366,7 +353,7 @@ void kill(char ** args){
     return;
   }
 
-  uint64_t pid = atoi(args[1]);
+  uint64_t pid = _atoi(args[1]);
 
   if (killProcess(pid) == INVALID_PID_CODE){
     printf(ERR_INVALID_PID);

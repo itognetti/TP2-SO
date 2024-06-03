@@ -65,7 +65,7 @@ void putPixel(int row, int col, int color);
 
 uint64_t alloc(int len);
 uint64_t freeMem(void * ptr);
-uint64_t memoryManStatus(char * buffer);
+uint64_t memoryManStatus(uint64_t * buffer);
 uint64_t printMem(uint64_t pos, char * buffer);
 uint64_t registerPipe(unsigned int pipeId);
 uint64_t registerPipeAvailable();

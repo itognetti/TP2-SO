@@ -21,13 +21,13 @@ void incrementProcess(uint64_t argCount, char *args[]) {
     } 
 }
 
-void testSynchronization(uint64_t argCount, char *args[]) {
+uint64_t testSynchronization(uint64_t argCount, char *args[]) {
     int semInUse = satoi(args[1]);
     if(semInUse){
         destroySemaphore(SEM_ID);
         if(registerSemaphore(SEM_ID, 1) != 0){
             printf("testSync: Error while opening the semaphore");
-            return ;
+            return -1;
         }
     }
     char *argv[] = {"sem", NULL, NULL};

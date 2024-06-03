@@ -111,7 +111,7 @@ int getRandomSign() {
     return (seed % 2 == 0) ? 1 : -1;    // Devuelve 1 si es par, -1 si es impar
 }
 
-uint64_t atoi( char * string) {
+uint64_t _atoi( char * string) {
     uint64_t result = 0;
 
     for(int i = 0 ; string[i] ; i++) {
@@ -119,6 +119,15 @@ uint64_t atoi( char * string) {
     }
 
     return result;
+}
+
+int _strncpy(char * dest, const char * src, unsigned int n){
+    int i=0;
+    for(; src[i]!=0 && i<n; i++){
+        dest[i] = src[i];
+    }
+    dest[i] = 0;
+    return i;
 }
 
 int isNum(char * str) {
