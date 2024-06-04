@@ -75,24 +75,26 @@ void addBlock(header_t *block, uint64_t newSize) {
 
     if (IS_EOL(block->size)) {
         // Add EOL marker after the new block
-        header_t *eolBlock = (header_t *) OFFSET_PTR(block, newSize);
-        addEOL(eolBlock);
+        addEOL((header_t *) OFFSET_PTR(block, newSize));
 
         block->size = newSize;
         block->allocated = TRUE;
 
         mem_st.allocatedBytes += newSize;
         mem_st.freeBytes -= newSize;
+
     } else if (newSize + MIN_REQUEST < originalSize) {  // Split the block
-        header_t *newFreeBlock = (header_t *) OFFSET_PTR(block, newSize);
         block->size = newSize;
         block->allocated = TRUE;
 
-        newFreeBlock->size = originalSize - newSize;
-        newFreeBlock->allocated = FALSE;
-
         mem_st.allocatedBytes += newSize;
         mem_st.freeBytes -= newSize;
+
+        block = (header_t *) OFFSET_PTR(block, newSize);
+
+        block->size = originalSize - newSize;
+        block->allocated = FALSE;
+
     } else {  // Use the entire block
         block->size = originalSize;
         block->allocated = TRUE;

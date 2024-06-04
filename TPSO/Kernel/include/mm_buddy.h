@@ -2,8 +2,6 @@
 #ifndef _MM_BUDDY_H_
 #define _MM_BUDDY_H_
 
-
-
 #define MIN_SIZE_CLASS 6
 
 #define HEADER_SIZE (sizeof(uint64_t)) 
@@ -15,8 +13,7 @@ typedef struct TNode{
     char isSplit;
 } TNode;
 
-
-int getSmallestAvailable(unsigned int sizeClass);
+int findSmallestAvailable(unsigned int sizeClass);
 
 #endif // _MM_BUDDY_H_
-#endif // USE_BUDDY
+#endif

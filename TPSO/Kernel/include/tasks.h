@@ -44,7 +44,7 @@
 										/*		 -=-=STACK=-=-		*/
 #define STACK_POINT_OF_ENTRY (21*8)   	/*  	|	RAX, RBX  |		*/
 										/*  	|	RCX, etc  |		*/   
-#define RDI_POS   (13*8)				/*		---------------		*/ 
+#define RDI_POS   (12*8)				/*		---------------		*/ 
 #define IP_POS    (6*8)					/*  	|	 RIP	  |		*/				
 #define CS_POS 	  (5*8)					/*  	|	  CS	  |		*/
 #define FLAGS_POS (4*8)					/*  	|	 RFLAGS	  |		*/

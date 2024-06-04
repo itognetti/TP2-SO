@@ -1,11 +1,10 @@
 #ifdef USE_BUDDY
-
 #include "../include/memoryManager.h"
 #include "../include/mm_buddy.h"
 
 #define NULL 0
 
-static TreeNode *buddyTree = (TreeNode *) ADD_PTR(HEAP_START, sizeof(MemoryStatus));
+static TNode *buddyTree = (TNode *) OFFSET_PTR(HP_ST, sizeof(m_status));
 static void *userMemoryStart;
 static unsigned int maxClassSize;
 static uint64_t buddyMemorySize;
@@ -36,17 +35,17 @@ static unsigned int getClassSize(uint64_t size) {
     while (size >>= 1)
         result++;
 
-    return result < MIN_CLASS_SIZE ? MIN_CLASS_SIZE : result + 1;
+    return result < MIN_SIZE_CLASS ? MIN_SIZE_CLASS : result + 1;
 }
 
 void memoryManagerInitialize() {
-    maxClassSize = getClassSize(HEAP_SIZE);
-    int totalNodes = (1 << (maxClassSize - MIN_CLASS_SIZE + 1)) - 1; 
+    maxClassSize = getClassSize(HP_SI);
+    int totalNodes = (1 << (maxClassSize - MIN_SIZE_CLASS + 1)) - 1; 
 
-    userMemoryStart = ADD_PTR(buddyTree, totalNodes * sizeof(TreeNode));
-    buddyMemorySize = HEAP_END - userMemoryStart;
+    userMemoryStart = OFFSET_PTR(buddyTree, totalNodes * sizeof(TNode));
+    buddyMemorySize = HP_E - userMemoryStart;
 
-    MemoryStatus* status = getMemoryStatus();
+    memStatus* status = getMemoryStatus();
     status->freeBytes = buddyMemorySize;
 }
 
@@ -82,15 +81,15 @@ int findSmallestAvailable(unsigned int classSize) {
 }
 
 static inline void *indexToPointer(unsigned int index, unsigned int classSize) {
-    return ADD_PTR(userMemoryStart, (index - getFirstIndexOfClass(classSize)) * (1 << classSize));
+    return OFFSET_PTR(userMemoryStart, (index - getFirstIndexOfClass(classSize)) * (1 << classSize));
 }
 
 static inline unsigned int pointerToIndex(void *pointer) {
     return *(unsigned int *)pointer;
 }
 
-MemoryStatus *getMemoryStatus() {
-    return (MemoryStatus*) HEAP_START;
+memStatus *getMemoryStatus() {
+    return (memStatus*) HP_ST;
 }
 
 void *allocateMemory(uint64_t size) {
@@ -105,7 +104,7 @@ void *allocateMemory(uint64_t size) {
     if (index == -1)
         return NULL;
 
-    MemoryStatus *status = getMemoryStatus();
+    memStatus *status = getMemoryStatus();
     uint64_t blockSize = 1 << classSize;
     status->allocatedBytes += blockSize;
     status->freeBytes -= blockSize;
@@ -114,7 +113,7 @@ void *allocateMemory(uint64_t size) {
     void *result = indexToPointer(index, classSize);
     *((unsigned int *) result) = index;
 
-    return ADD_PTR(result, HEADER_SIZE);
+    return OFFSET_PTR(result, HEADER_SIZE);
 }
 
 static void freeMemoryRecursively(unsigned int index) {
@@ -129,7 +128,7 @@ static void freeMemoryRecursively(unsigned int index) {
 }
 
 int getClassIndex(unsigned int index) {
-    for (int i = maxClassSize; i >= MIN_CLASS_SIZE; i--) {
+    for (int i = maxClassSize; i >= MIN_SIZE_CLASS; i--) {
         int firstClassIndex = getFirstIndexOfClass(i);
         int classIndexCount = getFirstIndexOfClass(i - 1) - firstClassIndex;
         if (index >= firstClassIndex && index < firstClassIndex + classIndexCount)
@@ -139,10 +138,10 @@ int getClassIndex(unsigned int index) {
 }
 
 void freeMemory(void *pointer) {
-    if (pointer == NULL || pointer < userMemoryStart || pointer > HEAP_END)
+    if (pointer == NULL || pointer < userMemoryStart || pointer > HP_E)
         return;
 
-    void *realPointer = ADD_PTR(pointer, -HEADER_SIZE);
+    void *realPointer = OFFSET_PTR(pointer, -HEADER_SIZE);
     unsigned int index = pointerToIndex(realPointer);
     if (!buddyTree[index].isAllocated)
         return;
@@ -151,10 +150,10 @@ void freeMemory(void *pointer) {
 
     uint64_t size = 1 << getClassIndex(index);
 
-    MemoryStatus *status = getMemoryStatus();
+    memStatus *status = getMemoryStatus();
     status->allocatedBytes -= size;
     status->freeBytes += size;
     status->allocatedBlocks--;
 }
 
-#endif // USE_BUDDY
+#endif

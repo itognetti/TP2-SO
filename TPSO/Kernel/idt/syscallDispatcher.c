@@ -32,7 +32,7 @@ uint64_t syscallDispatcher(uint64_t id, uint64_t param1, uint64_t param2, uint64
             sys_free((void *) param1);
             return 0;
         case SYS_MEMORY_MAN_STATUS:
-            return sys_memory_man_status((uint64_t *) param1);
+            return sys_memory_man_status((char *) param1);
         case SYS_PRINT_MEMORY:
             return sys_print_memory((uint64_t) param1, (char *) param2);
         case SYS_REGISTER_PIPE:
@@ -62,7 +62,7 @@ uint64_t syscallDispatcher(uint64_t id, uint64_t param1, uint64_t param2, uint64
             sys_destroy_sem((unsigned int) param1);
             return 0;
         case SYS_CHILD_PROC_REGISTER:
-            return sys_register_child_process((uint64_t) param1, (uint8_t) param2, (uint8_t) param3, (char **) param4);
+            return sys_register_child_process((unsigned int) param1, (uint8_t) param2, (uint8_t) param3, (char **) param4);
         case SYS_CHILD_WAIT:
             sys_wait_for_children();
             return 0;
