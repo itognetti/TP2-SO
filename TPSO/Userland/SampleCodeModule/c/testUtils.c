@@ -1,29 +1,53 @@
 #include <testUtils.h>
 
-static uint32_t z_seed = 362436069;
-static uint32_t w_seed = 521288629;
+// Random
+static uint32_t m_z = 362436069;
+static uint32_t m_w = 521288629;
 
-uint32_t generateRandomUint() {
-    z_seed = 36969 * (z_seed & 65535) + (z_seed >> 16);
-    w_seed = 18000 * (w_seed & 65535) + (w_seed >> 16);
-    return (z_seed << 16) + w_seed;
+uint32_t getUint() {
+  m_z = 36969 * (m_z & 65535) + (m_z >> 16);
+  m_w = 18000 * (m_w & 65535) + (m_w >> 16);
+  return (m_z << 16) + m_w;
 }
 
-uint32_t generateUniformRandom(uint32_t max) {
-    uint32_t randomUint = generateRandomUint();
-    return (randomUint + 1.0) * 2.328306435454494e-10 * max;
+uint32_t getUniform(uint32_t max) {
+  uint32_t u = getUint();
+  return (u + 1.0) * 2.328306435454494e-10 * max;
 }
 
-//Verifica si un bloque de memoria de tamaño size a partir de start contiene el valor value
-uint8_t checkMemory(void *start, uint8_t value, uint32_t size) {
-    uint8_t *current = (uint8_t *)start;
+// Memory
+uint8_t memcheck(void *start, uint8_t value, uint32_t size) {
+  uint8_t *p = (uint8_t *)start;
+  uint32_t i;
 
-    for (uint32_t i = 0; i < size; i++, current++) {
-        if (*current != value) {
-            return 0;
-        }
-    }
-    return 1;
+  for (i = 0; i < size; i++, p++)
+    if (*p != value)
+      return 0;
+
+  return 1;
+}
+
+// Parameters
+int64_t satoi(char *str) {
+  uint64_t i = 0;
+  int64_t res = 0;
+  int8_t sign = 1;
+
+  if (!str)
+    return 0;
+
+  if (str[i] == '-') {
+    i++;
+    sign = -1;
+  }
+
+  for (; str[i] != '\0'; ++i) {
+    if (str[i] < '0' || str[i] > '9')
+      return 0;
+    res = res * 10 + str[i] - '0';
+  }
+
+  return res * sign;
 }
 
 void bussyWait(uint64_t n) {
@@ -38,34 +62,10 @@ void endlessLoop() {
 }
 
 void endlessLoopPrint(uint64_t wait) {
-  int64_t pid = getPid();
+  int64_t PID = getPid();
 
   while (1) {
-    printf(int64ToStringConverter(pid));
+    printf(int64ToStringConverter(PID));
     bussyWait(wait);
   }
-}
-
-int64_t satoi(char *str) {
-    uint64_t index = 0;
-    int64_t result = 0;
-    int8_t sign = 1;
-
-    if (!str) {
-        return 0;
-    }
-
-    if (str[index] == '-') {
-        index++;
-        sign = -1;
-    }
-
-    for (; str[index] != '\0'; ++index) {
-        if (str[index] < '0' || str[index] > '9') {
-            return 0;
-        }
-        result = result * 10 + (str[index] - '0');
-    }
-
-    return result * sign;
 }

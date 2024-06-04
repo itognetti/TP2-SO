@@ -1,19 +1,17 @@
 #ifndef TEST_SYNC_H
 #define TEST_SYNC_H
 
-#include <testUtils.h>
-#include <syscalls.h>
-#include <libIO.h>
 #include <stdint.h>
+#include <syscalls.h>
+#include <testUtils.h>
 #include <shell.h>
+#include <libIO.h>
 
+
+#define SEM_ID 2024
+#define TOTAL_PAIR_PROCESSES 2
 #define MAX 400
-#define TOTAL_PAIR_PROC 2
-#define SEM_ID 2023
 
-// shared mem
-int64_t global;
-
-uint64_t testSynchronization(uint64_t argCount, char *args[]);
+int64_t global; // shared memory
 
 #endif

@@ -2,74 +2,86 @@
 #include "../include/testUtils.h"
 #include "../include/shell.h"
 
-enum ProcessState { RUNNING, BLOCKED, KILLED };
+enum State { RUNNING,
+             BLOCKED,
+             KILLED };
 
-typedef struct ProcessRequest {
-  int32_t processId;
-  enum ProcessState state;
-} ProcessRequest;
+typedef struct P_rq {
+  int32_t pid;
+  enum State state;
+} p_rq;
 
-void testProcesses(char *argv[]) {
-  uint8_t requestIndex;
-  uint8_t aliveCount = 0;
+void testProcesses(uint64_t argc, char *argv[]){
+  uint8_t rq;
+  uint8_t alive = 0;
   uint8_t action;
   uint64_t maxProcesses;
-  char *emptyArguments[] = {0};
+  char * argvAux[] = {0};
 
-  if ((maxProcesses = satoi(argv[0])) <= 0)
-    return ;
+  if (argc != 1)
+    return;
 
-  ProcessRequest processRequests[maxProcesses];
-  printf("testProcesses: Creating processes \n");
+  if ((maxProcesses = satoi(argv[0])) <= 0){
+    return;
+  }
+
+  p_rq p_rqs[maxProcesses];
+
+  printf("testProcesses : Creating processes \n");
 
   while (1) {
-    for (requestIndex = 0; requestIndex < maxProcesses; requestIndex++) {
-      processRequests[requestIndex].processId = registerChildProcess((uint64_t) &endlessLoop, 1, 1, (uint64_t) emptyArguments);
-      if (processRequests[requestIndex].processId == -1) {
-        printf("testProcesses: error while creating a process\n");
-        return ;
+
+    // Create maxProcesses processes
+    for (rq = 0; rq < maxProcesses; rq++) {
+       p_rqs[rq].pid = registerChildProcess((uint64_t)&endlessLoop, 1, 1, (uint64_t) argvAux);
+
+      if (p_rqs[rq].pid == -1) {
+        printf("test_processes: Error creating process\n");
+        return;
       } else {
-        processRequests[requestIndex].state = RUNNING;
-        aliveCount++;
+        p_rqs[rq].state = RUNNING;
+        alive++;
       }
     }
 
-    while (aliveCount > 0) {
-      for (requestIndex = 0; requestIndex < maxProcesses; requestIndex++) {
-        action = generateUniformRandom(100) % 2;
+    // Randomly kills, blocks or unblocks processes until every one has been killed
+    while (alive > 0) {
+
+      for (rq = 0; rq < maxProcesses; rq++) {
+        action = getUniform(100) % 2;
 
         switch (action) {
           case 0:
-            if (processRequests[requestIndex].state == RUNNING || processRequests[requestIndex].state == BLOCKED) {
-              if(killProcess(processRequests[requestIndex].processId) == -1){
-                printf("testProcesses: error while killing a process\n");
-                return ;
-              }
-              processRequests[requestIndex].state = KILLED;
-              aliveCount--;
+            if (p_rqs[rq].state == RUNNING || p_rqs[rq].state == BLOCKED) {
+              if (killProcess(p_rqs[rq].pid) == -1) {
+                printf("test_processes: Error killing process\n");
+                return;
+              } 
+              p_rqs[rq].state = KILLED;
+              alive--;
             }
             break;
 
           case 1:
-            if (processRequests[requestIndex].state == RUNNING) {
-                if(pauseOrUnpauseProcess(processRequests[requestIndex].processId) == -1){
-                  printf("testProcesses: error while blocking a process\n");
-                  return ;    
-                }
-              processRequests[requestIndex].state = BLOCKED;
+            if (p_rqs[rq].state == RUNNING) {
+              if (pauseOrUnpauseProcess(p_rqs[rq].pid) == -1) {
+                printf("test_processes: Error blocking process\n");
+                return;
+              } 
+              p_rqs[rq].state = BLOCKED;
             }
             break;
         }
       }
 
-      // Desbloquea procesos aleatoriamente
-      for (requestIndex = 0; requestIndex < maxProcesses; requestIndex++)
-        if (processRequests[requestIndex].state == BLOCKED && generateUniformRandom(100) % 2) {
-          if(pauseOrUnpauseProcess(processRequests[requestIndex].processId) == -1){
-            printf("testProcesses: error while unblocking a process\n");
-            return ;
+      // Randomly unblocks processes
+      for (rq = 0; rq < maxProcesses; rq++)
+        if (p_rqs[rq].state == BLOCKED && getUniform(100) % 2) {
+          if (pauseOrUnpauseProcess(p_rqs[rq].pid) == -1) {
+            printf("test_processes: Error unblocking process\n");
+            return;
           }
-          processRequests[requestIndex].state = RUNNING;
+          p_rqs[rq].state = RUNNING;
         }
     }
   }

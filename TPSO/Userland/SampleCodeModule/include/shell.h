@@ -37,7 +37,6 @@ void handleProcess(char ** words, unsigned int amount_of_words);
 int userCommandParser(char ** command, char readBuf[BUFFER_SIZE]);
 
 void initShell();
-void callModule(char *buffer);
 void help();
 void divZero();
 void invOpCode();
@@ -46,7 +45,7 @@ void pong();
 void infoReg();
 void clear();
 void testMemoryManager();
-void testProcesses(char *argv[]);
+void testProcesses(uint64_t argc, char *argv[]);
 void testPriorities();
 
 void loop();

@@ -1,63 +1,67 @@
 #include <testSync.h>
 
-void incrementSlowly(int64_t *ptr, int64_t increment) {
-    int aux;
-    aux = *ptr;
-    aux += increment;
-    for(int i = 0; i < 40000; i++);
-    *ptr = aux;
+void slowInc(int64_t *p, int64_t inc) {
+  int aux;
+  aux = *p;
+  aux += inc;
+  for(int i = 0; i < 30000 ; i++) 
+    ;
+  *p = aux;
 }
 
-void incrementProcess(uint64_t argCount, char *args[]) {
-    int increment = 1;
-    for(int i = 0; i < MAX; i++){
-        if(args[1][0] == 's'){
-            waitSemaphore(SEM_ID);
-        }
-        incrementSlowly(&global, increment);
-        if(args[1][0] == 's'){
-            signalSemaphore(SEM_ID);
-        }
-    } 
+void myProcessInc(uint64_t argc, char *argv[]) {
+  int inc = 1;
+
+  int i;
+  for (i = 0; i < MAX; i++) {
+    if (argv[1][0] == 's') {
+      waitSemaphore(SEM_ID);
+    }
+    slowInc(&global, inc);
+    if (argv[1][0] == 's') {
+      signalSemaphore(SEM_ID);
+    }
+  }
 }
 
-uint64_t testSynchronization(uint64_t argCount, char *args[]) {
-    int semInUse = satoi(args[1]);
-    if(semInUse){
-        destroySemaphore(SEM_ID);
-        if(registerSemaphore(SEM_ID, 1) != 0){
-            printf("testSync: Error while opening the semaphore");
-            return -1;
-        }
+uint64_t testSync(uint64_t argc, char *argv[]) { //{n, use_sem, 0}
+ int semUse = satoi(argv[1]);
+  if(semUse) {
+    destroySemaphore(SEM_ID);
+    if (registerSemaphore(SEM_ID, 1) != 0) {
+      printf("testSync: Error opening semaphore\n");
+      return -1;
     }
-    char *argv[] = {"sem", NULL, NULL};
+  }
 
-    global = 0;
+  char *args[] = {"sem", NULL, NULL};
 
-    if(semInUse){
-        argv[1] = "s";
+  global = 0;
+
+  if(semUse) {
+    args[1] = "s";
+  }
+
+  int i;
+  for (i = 0; i < TOTAL_PAIR_PROCESSES; i++) {
+    int error = registerChildProcess((uint64_t)&myProcessInc, STDIN, BACKGROUND, (uint64_t) args);
+    if (error <= 0 ) {
+      printf("testSync : Error creating children");
     }
+  }
 
-    for(int i = 0; i < TOTAL_PAIR_PROC; i++){
-        int retValue = registerChildProcess((uint64_t) &incrementProcess, STDIN, BACKGROUND, (uint64_t) argv);
-        if (retValue <= 0){
-            printf("testSync: Error creating children");
-        }
-    }
+  waitChildren();
 
-    waitChildren();
+  if(semUse) {
+    destroySemaphore(SEM_ID);
+  }
 
-    if(semInUse){
-        destroySemaphore(SEM_ID);
-    }
+  printf("testSync: Global expected value was ");
+  char * expectedValue = int64ToStringConverter(MAX * TOTAL_PAIR_PROCESSES);
+  println(expectedValue);
+  printf("testSync: Global final value was ");
+  char * finalValue = int64ToStringConverter(global);
+  println(finalValue);
 
-    char * expectedValue = int64ToStringConverter(MAX * TOTAL_PAIR_PROC);
-    char * realValue = int64ToStringConverter(global);
-
-    printf("testSync: Global expected value");
-    println(expectedValue);
-    printf("testSync: Global real value");
-    println(realValue);
-
-    return 0;
+  return 0;
 }
