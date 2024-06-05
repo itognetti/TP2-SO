@@ -10,8 +10,8 @@
 
 #define SEM_ID 2024
 #define TOTAL_PAIR_PROCESSES 2
-#define MAX 400
+#define MAX 1000
 
-int64_t global; // shared memory
+int64_t global;
 
 #endif

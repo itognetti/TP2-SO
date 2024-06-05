@@ -9,44 +9,65 @@ void slowInc(int64_t *p, int64_t inc) {
   *p = aux;
 }
 
-void myProcessInc(uint64_t argc, char *argv[]) {
+void myProcessInc(char *argv[]) {
   int inc = 1;
+  int increments = satoi(argv[1]);
 
   int i;
-  for (i = 0; i < MAX; i++) {
-    if (argv[1][0] == 's') {
+  for (i = 0; i < increments; i++) {
+    if (argv[2][0] == 's') {
       waitSemaphore(SEM_ID);
     }
     slowInc(&global, inc);
-    if (argv[1][0] == 's') {
+    if (argv[2][0] == 's') {
       signalSemaphore(SEM_ID);
     }
   }
 }
 
-uint64_t testSync(uint64_t argc, char *argv[]) { //{n, use_sem, 0}
- int semUse = satoi(argv[1]);
+void testSync(char *argv[]) { //{n, use_sem, 0}
+  int increments, processes, semUse;
+
+  if((increments = satoi(argv[1])) <= 0){
+    printf("testSynchro: Invalid increment value\n");
+    return;
+  }
+
+  if((processes = satoi(argv[2])) <= 0){
+    printf("testSynchro: Invalid quantity of processes value\n");
+    return;
+  }
+
+  semUse = satoi(argv[3]);
+  if(semUse != 0 && semUse != 1){
+    printf("testSynchro: Invalid semaphore flag value\n");
+    return;
+  }
+
   if(semUse) {
     destroySemaphore(SEM_ID);
-    if (registerSemaphore(SEM_ID, 1) != 0) {
-      printf("testSync: Error opening semaphore\n");
-      return -1;
+    if(registerSemaphore(SEM_ID, 1) != 0) {
+      printf("testSynchro: Error opening semaphore\n");
+      return;
     }
   }
 
-  char *args[] = {"sem", NULL, NULL};
+  char *args[] = {"sum", argv[1], "n", NULL};
 
   global = 0;
 
   if(semUse) {
-    args[1] = "s";
+    args[2] = "s";
   }
 
   int i;
-  for (i = 0; i < TOTAL_PAIR_PROCESSES; i++) {
-    int error = registerChildProcess((uint64_t)&myProcessInc, STDIN, BACKGROUND, (uint64_t) args);
+
+  println("testSynchro: Incrementing...");
+
+  for (i = 0; i < processes; i++) {
+    int error = registerChildProcess((uint64_t)&myProcessInc, STDIN, BACKGROUND, args);
     if (error <= 0 ) {
-      printf("testSync : Error creating children");
+      printf("testSynchro: Error creating children");
     }
   }
 
@@ -56,12 +77,12 @@ uint64_t testSync(uint64_t argc, char *argv[]) { //{n, use_sem, 0}
     destroySemaphore(SEM_ID);
   }
 
-  printf("testSync: Global expected value was ");
-  char * expectedValue = int64ToStringConverter(MAX * TOTAL_PAIR_PROCESSES);
+  printf("testSynchro: Global expected value was ");
+  char * expectedValue = int64ToStringConverter(increments * processes);
   println(expectedValue);
-  printf("testSync: Global final value was ");
+  printf("testSynchro: Global final value was ");
   char * finalValue = int64ToStringConverter(global);
   println(finalValue);
 
-  return 0;
+  return;
 }

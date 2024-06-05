@@ -11,7 +11,7 @@
 #define BUFFER_SIZE 25
 #define STDIN 1
 #define STDOUT 1
-#define MODULES 20
+#define MODULES 21
 #define HALF_SECOND 500000000
 #define ACTIVE_PROCESS 1
 #define PAUSED_PROCESS 2
@@ -44,9 +44,10 @@ void time();
 void pong();
 void infoReg();
 void clear();
-void testMemoryManager();
-void testProcesses(uint64_t argc, char *argv[]);
+void testMemoryManager(char * argv[]);
+void testProcesses(char *argv[]);
 void testPriorities();
+void testSync(char *argv[]);
 
 void loop();
 void cat();

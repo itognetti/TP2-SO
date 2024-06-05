@@ -2,7 +2,7 @@
 
 #define ERR_PARAM_NO_NEED "This command does not require parameters, please try executing it without any.\n"
 #define ERR_PIPE_UNSUPPORTED "Pipes are not supported by this program, please execute it without using pipes.\n"
-#define ERR_MISSING_PARAMS "The program expects %d parameters.\n"
+#define ERR_MISSING_PARAMS "The program expects parameters.\n"
 #define ERR_MISSING_PARAM "The program expects a parameter.\n"
 #define ERR_INVALID_PROGRAM "The program you are trying to run does not exist. Refer to the help command for help.\n"
 #define ERR_MEMORY_ALLOC "Unable to allocate space for arguments!.\n"
@@ -25,9 +25,10 @@ modules module[] = {
     {"pong","              -    Loads Pong game",(uint64_t) &pong,0,0},
     {"inforeg","           -    Displays the registers state",(uint64_t) &infoReg,0,0},
     {"clear","             -    Clears the screen",(uint64_t) &clear,0,0},
-    {"testMemoryManager"," -    Test memory manager",(uint64_t) &testMemoryManager ,0,0},
+    {"testMemoryManager"," -    Test memory manager",(uint64_t) &testMemoryManager ,1,0},
     {"testProcesses","     -    Test process management",(uint64_t) &testProcesses,1,0},
     {"testPriorities","    -    Test priorities",(uint64_t) &testPriorities,0,0},
+    {"testSynchro","       -    Test synchronization",(uint64_t) &testSync, 3, 0},
     {"mem","               -    Prints the memory status",(uint64_t) &displayMemoryStatus,0,0},
     {"ps","                -    Shows every running process and its data",(uint64_t) &ps,0,0},
     {"loop","              -    Prints its id with a greeting every a specified number of seconds",(uint64_t) &loop,0,1},

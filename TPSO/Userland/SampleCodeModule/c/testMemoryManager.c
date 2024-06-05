@@ -11,15 +11,18 @@ typedef struct MM_rq {
   uint32_t size;
 } mm_rq;
 
-void testMemoryManager() {
+void testMemoryManager(char * argv[]) {
 
   mm_rq mm_rqs[MAX_BLOCKS];
   uint8_t rq;
-  uint32_t total;
-  uint64_t maxMemory = 2000;
+  uint64_t total;
+  uint64_t maxMemory;
 
+  if ((maxMemory = satoi(argv[1])) <= 0){
+    println("Invalid quantity of MB");
+    return;
+  }
   
-
   while (1) {
     rq = 0;
     total = 0;
@@ -29,7 +32,7 @@ void testMemoryManager() {
     // Request as many blocks as we can
     while (rq < MAX_BLOCKS && total < maxMemory) {
       mm_rqs[rq].size = getUniform(maxMemory - total - 1) + 1;
-       mm_rqs[rq].address = (void *) alloc(mm_rqs[rq].size);
+      mm_rqs[rq].address = (void *) alloc(mm_rqs[rq].size);
 
       if(mm_rqs[rq].address == 0) {
         printf("testMemoryManager: Out of memory\n");

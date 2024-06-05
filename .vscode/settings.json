@@ -17,6 +17,7 @@
         "streambuf": "c",
         "shell.h": "c",
         "typeinfo": "c",
-        "stdint.h": "c"
+        "stdint.h": "c",
+        "__locale": "c"
     }
 }
