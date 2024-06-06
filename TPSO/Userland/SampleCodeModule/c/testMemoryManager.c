@@ -4,69 +4,69 @@
 #include "../include/loader.h"
 #include <string.h>
 
-#define MAX_BLOCKS 128
+#define MAX_MEMORY_BLOCKS 128
 
-typedef struct MM_rq {
+typedef struct MemoryRequest {
   void *address;
   uint32_t size;
-} mm_rq;
+} MemoryRequest;
 
-void testMemoryManager(char * argv[]) {
+void testMemoryManager(char *argv[]) {
 
-  mm_rq mm_rqs[MAX_BLOCKS];
-  uint8_t rq;
-  uint64_t total;
-  uint64_t maxMemory;
+  MemoryRequest memRequests[MAX_MEMORY_BLOCKS];
+  uint8_t currentRequest;
+  uint64_t totalAllocatedMemory;
+  uint64_t maxMemoryLimit;
 
-  if ((maxMemory = satoi(argv[1])) <= 0){
+  if ((maxMemoryLimit = satoi(argv[1])) <= 0){
     println("Invalid MB value");
     return;
   }
   
   while (1) {
-    rq = 0;
-    total = 0;
+    currentRequest = 0;
+    totalAllocatedMemory = 0;
 
     printf("Allocating memory...\n");
 
-    // Request as many blocks as we can
-    while (rq < MAX_BLOCKS && total < maxMemory) {
-      mm_rqs[rq].size = getUniform(maxMemory - total - 1) + 1;
-      mm_rqs[rq].address = (void *) alloc(mm_rqs[rq].size);
+    
+    while (currentRequest < MAX_MEMORY_BLOCKS && totalAllocatedMemory < maxMemoryLimit) {
+      memRequests[currentRequest].size = getUniform(maxMemoryLimit - totalAllocatedMemory - 1) + 1;
+      memRequests[currentRequest].address = (void *) alloc(memRequests[currentRequest].size);
 
-      if(mm_rqs[rq].address == 0) {
+      if (memRequests[currentRequest].address == 0) {
         printf("Out of memory\n");
         return;
       }
 
-      if (mm_rqs[rq].address) {
-        total += mm_rqs[rq].size;
-        rq++;
+      totalAllocatedMemory += memRequests[currentRequest].size;
+      currentRequest++;
+    }
+
+    
+    for (uint32_t i = 0; i < currentRequest; i++){
+      if (memRequests[i].address){
+        _memset(memRequests[i].address, i, memRequests[i].size);
       }
     }
 
-    // Set memory
-    uint32_t i;
-    for (i = 0; i < rq; i++){
-      if (mm_rqs[i].address){
-        _memset(mm_rqs[i].address, i, mm_rqs[i].size);
-        }
-    }
-    // Testing
-    for (i = 0; i < rq; i++){
-      if (mm_rqs[i].address){
-        if (!memcheck(mm_rqs[i].address, i, mm_rqs[i].size)) {
-          printf("Error\n");
+    
+    for (uint32_t i = 0; i < currentRequest; i++){
+      if (memRequests[i].address){
+        if (!memcheck(memRequests[i].address, i, memRequests[i].size)) {
+          printf("Memory check failed\n");
           return;
         }
       }
     }
 
-    // Free memory
-    for (i = 0; i < rq; i++)
-      if (mm_rqs[i].address){
-          freeMem(mm_rqs[i].address);
+    
+    for (uint32_t i = 0; i < currentRequest; i++){
+      if (memRequests[i].address){
+        freeMem(memRequests[i].address);
       }
-    printf("OK\n");
+    }
+
+    printf("Memory successfully managed\n");
   }
 }
