@@ -32,7 +32,7 @@ void philo() {
 void addPhilo(){
     waitSemaphore(MUTEX);
     if(currentCount == MAX_PHILOSOPHERS){
-        printf("MAX PHILOSOPHERS REACHED\n");
+        printlnColored("MAX PHILOSOPHERS REACHED", RED);
     }else{
         state[currentCount] = THINKING;
         semaphore[currentCount] = registerSemaphoreAvailable(0);
@@ -59,7 +59,7 @@ void addPhilo(){
 
 void removePhilo(){
     if(currentCount == MIN_PHILOSOPHERS){
-        printf("MIN PHYLOS REACHED\n");
+        printlnColored("MIN PHILOSOPHERS REACHED", RED);
         return;
     }
 

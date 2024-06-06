@@ -15,6 +15,5 @@ void * memcpy(void * destination, const void * source, uint64_t length);
 
 char *cpuVendor(char *result);
 int hexToString(uint64_t number, char * buffer, int length);
-int _xadd(unsigned int * lock, int value);
-int _xchg(unsigned int * lock, int value);
+
 #endif

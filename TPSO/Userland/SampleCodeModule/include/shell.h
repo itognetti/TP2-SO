@@ -18,12 +18,12 @@
 #define MEM_INFORMATION 3
 
 #define ERR_PARAM_NO_NEED "This command does not require parameters, please try executing it without any.\n"
-#define ERR_PIPE_UNSUPPORTED "Pipes are not supported by this program, please execute it without using pipes.\n"
-#define ERR_MISSING_PARAMS "The program expects parameters.\n"
-#define ERR_MISSING_PARAM "The program expects a parameter.\n"
-#define ERR_MEMORY_ALLOC "Unable to allocate space for arguments!.\n"
-#define ERR_INVALID_COMMAND "Unrecognized command. Use the help command to see available commands.\n"
-#define ERR_INVALID_PID "The provided PID is invalid: No such process is currently running.\n"
+#define ERR_PIPE_UNSUPPORTED "This command does not support the use of pipes, please try executing it without them.\n"
+#define ERR_MISSING_PARAMS "The command requires parameters to be provided.\n"
+#define ERR_MISSING_PARAM "The command requires a parameter to be provided.\n"
+#define ERR_MEMORY_ALLOC "Space allocation for arguments failed.\n"
+#define ERR_INVALID_COMMAND "This command is not recognized, please use the 'help' command to view available commands.\n"
+#define ERR_INVALID_PID "The specified pid is invalid. No process has this identification value.\n"
 
 #define INVALID_PID_CODE -1
 #define EXEC_BG 0

@@ -9,6 +9,6 @@ typedef struct memStatus{
     uint64_t allocatedBlocks;
 } memStatus;
 
-void printMemStatus(uint64_t * buffer);
+void printMemStatus(uint64_t buffer[3]);
 
 #endif

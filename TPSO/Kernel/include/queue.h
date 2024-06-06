@@ -5,8 +5,6 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-#define NULL 0
-
 typedef struct queueData{
     uint64_t * array;
     unsigned int readIndex;

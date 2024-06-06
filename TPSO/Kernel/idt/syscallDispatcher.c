@@ -32,7 +32,7 @@ uint64_t syscallDispatcher(uint64_t id, uint64_t param1, uint64_t param2, uint64
             sys_free((void *) param1);
             return 0;
         case SYS_MEMORY_MAN_STATUS:
-            return sys_memory_man_status((char *) param1);
+            return sys_memory_man_status((uint64_t *) param1);
         case SYS_PRINT_MEMORY:
             return sys_print_memory((uint64_t) param1, (char *) param2);
         case SYS_REGISTER_PIPE:
@@ -85,4 +85,5 @@ uint64_t syscallDispatcher(uint64_t id, uint64_t param1, uint64_t param2, uint64
             sys_renounce_cpu();
             return 0;
     }
+    return 1;
 }

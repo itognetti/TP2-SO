@@ -28,8 +28,6 @@
 #define WAITING_FOR_SEM 4
 #define WAITING_FOR_INPUT 5
 
-#define NULL 0
-
 #define TOTAL_TASKS 20
 #define STACK_SIZE 4096
 
@@ -103,6 +101,5 @@ unsigned int changePriority(unsigned int PID, int delta);
 uint8_t enoughTimeLeft();
 uint64_t nextTask(uint64_t stackPointer, uint64_t stackSegment);
 int getProcessInfo(processInfo * info);
-void listProcess();
 
 #endif

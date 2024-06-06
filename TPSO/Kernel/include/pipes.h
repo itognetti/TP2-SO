@@ -10,7 +10,6 @@
 
 #define MAX_PIPES 20
 #define PIPE_SIZE 1024
-#define NULL 0
 #define INITIAL_PIPE 10 
 #define INVALID_PIPE_ID -1
 #define EOF -1

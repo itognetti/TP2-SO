@@ -22,7 +22,7 @@ void enqueue(queueData * queue, uint64_t elem){
 
 uint64_t dequeue(queueData * queue){
     if(queue->qty == 0){
-        return (uint64_t) NULL;
+        return (uint64_t) 0;
     }
     uint64_t resp = queue->array[queue->readIndex];
     queue->readIndex = (queue->readIndex + 1) % (queue->size);

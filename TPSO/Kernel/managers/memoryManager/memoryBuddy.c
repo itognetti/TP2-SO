@@ -38,14 +38,14 @@ static unsigned int getClassSize(uint64_t size) {
     return result < MIN_SIZE_CLASS ? MIN_SIZE_CLASS : result + 1;
 }
 
-void memoryManagerInitialize() {
+void m_init() {
     maxClassSize = getClassSize(HP_SI);
-    int totalNodes = (1 << (maxClassSize - MIN_SIZE_CLASS + 1)) - 1; 
+    int totalNodes = POW_2(1 << (maxClassSize - MIN_SIZE_CLASS + 1)) - 1; 
 
     userMemoryStart = OFFSET_PTR(buddyTree, totalNodes * sizeof(TNode));
     buddyMemorySize = HP_E - userMemoryStart;
 
-    memStatus* status = getMemoryStatus();
+    memStatus* status = m_status();
     status->freeBytes = buddyMemorySize;
 }
 
@@ -88,11 +88,11 @@ static inline unsigned int pointerToIndex(void *pointer) {
     return *(unsigned int *)pointer;
 }
 
-memStatus *getMemoryStatus() {
+memStatus *m_status() {
     return (memStatus*) HP_ST;
 }
 
-void *allocateMemory(uint64_t size) {
+void *m_malloc(uint64_t size) {
     if (size <= 0 || size + HEADER_SIZE > buddyMemorySize)
         return NULL;    
 
@@ -104,7 +104,7 @@ void *allocateMemory(uint64_t size) {
     if (index == -1)
         return NULL;
 
-    memStatus *status = getMemoryStatus();
+    memStatus *status = m_status();
     uint64_t blockSize = 1 << classSize;
     status->allocatedBytes += blockSize;
     status->freeBytes -= blockSize;
@@ -137,7 +137,7 @@ int getClassIndex(unsigned int index) {
     return -1; // should not happen
 }
 
-void freeMemory(void *pointer) {
+void m_free(void *pointer) {
     if (pointer == NULL || pointer < userMemoryStart || pointer > HP_E)
         return;
 
@@ -150,7 +150,7 @@ void freeMemory(void *pointer) {
 
     uint64_t size = 1 << getClassIndex(index);
 
-    memStatus *status = getMemoryStatus();
+    memStatus *status = m_status();
     status->allocatedBytes -= size;
     status->freeBytes += size;
     status->allocatedBlocks--;
