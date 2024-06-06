@@ -1,22 +1,5 @@
 #include <shell.h>
 
-#define ERR_PARAM_NO_NEED "This command does not require parameters, please try executing it without any.\n"
-#define ERR_PIPE_UNSUPPORTED "Pipes are not supported by this program, please execute it without using pipes.\n"
-#define ERR_MISSING_PARAMS "The program expects parameters.\n"
-#define ERR_MISSING_PARAM "The program expects a parameter.\n"
-#define ERR_INVALID_PROGRAM "The program you are trying to run does not exist. Refer to the help command for help.\n"
-#define ERR_MEMORY_ALLOC "Unable to allocate space for arguments!.\n"
-#define ERR_INVALID_COMMAND "Unrecognized command. Use the help command to see available commands.\n"
-#define ERR_INVALID_PID "The provided PID is invalid: No such process is currently running.\n"
-
-#define INVALID_PID_CODE -1
-#define EXEC_BG 0
-#define EXEC_FG 1
-
-#define PIPE "|"
-#define MAX_CMD_WORDS 10
-#define MIN_VALUE(a, b) ((a) <= (b) ? (a) : (b))
-
 modules module[] = {
     {"help","              -    Displays the module list", (uint64_t)&help,0,0},
     {"divzero","           -    Throws Divide by Zero exception",(uint64_t) &divZero,0,0},
@@ -29,7 +12,7 @@ modules module[] = {
     {"testProcesses","     -    Test process management",(uint64_t) &testProcesses,1,0},
     {"testPriorities","    -    Test priorities",(uint64_t) &testPriorities,0,0},
     {"testSynchro","       -    Test synchronization",(uint64_t) &testSync, 3, 0},
-    {"mem","               -    Prints the memory status",(uint64_t) &displayMemoryStatus,0,0},
+    {"mem","               -    Prints the memory status",(uint64_t) &mem,0,0},
     {"ps","                -    Shows every running process and its data",(uint64_t) &ps,0,0},
     {"loop","              -    Prints its id with a greeting every a specified number of seconds",(uint64_t) &loop,0,1},
     {"kill","              -    Kills a process given its id",(uint64_t) &kill,1,0},
@@ -42,76 +25,29 @@ modules module[] = {
 };
 
 static char *starter = "$> ";
-int firstInit = 1;
-
-void nice(char **args) {
-    if (!isNum(args[1]) && !isNum(args[2])) {
-        printf("Invalid argument! Arguments must be numbers.\n");
-        return;
-    }
-    unsigned int pid = _atoi(args[1]);
-    int priorityDelta = _atoi(args[2]);
-    niceProcess(pid, priorityDelta);
-}
-
-void block(char **args) {
-    if (!isNum(args[1])) {
-        printf("Invalid argument! Argument must be a number.\n");
-        return;
-    }
-    uint64_t pid = _atoi(args[1]);
-    pauseOrUnpauseProcess((unsigned int)pid);
-    return;
-}
-
-static char *memoryInfoLabels[] = {"Allocated Bytes: ", "Free Bytes: ", "Allocated Blocks: "};
-
-void displayMemoryStatus() {
-    uint64_t memoryInfo[MEMINFO] = {0};
-    memoryManStatus(memoryInfo);
-
-    printf("Total Memory: ");
-
-    char totalMemoryBuffer[BUFFER_SIZE] = {0};
-    _strncpy(totalMemoryBuffer, int64ToStringConverter(memoryInfo[0] + memoryInfo[1]), BUFFER_SIZE);
-    println(totalMemoryBuffer);
-
-    for (int i = 0; i < MEMINFO; i++) {
-        char infoBuffer[BUFFER_SIZE] = {0};
-        printf(memoryInfoLabels[i]);
-        _strncpy(infoBuffer, int64ToStringConverter(memoryInfo[i]), BUFFER_SIZE);
-        println(infoBuffer);
-    }
-}
+int firstInitialization = 1;
+static char *memoryInfoStats[] = {"Allocated Bytes: ", "Free Bytes: ", "Allocated Blocks: "};
 
 void initShell(){
-    if(firstInit){
+    if(firstInitialization){
         println("Welcome! Enter help to display module list");
-        firstInit = 0;
+        firstInitialization = 0;
     }
-    char * command[MAX_CMD_WORDS] = {0};
+    char * inputCommand[MAX_CMD_WORDS] = {0};
     char buffer[BUFFER_SIZE] = {0};
     while(1){
         printColored(starter, GREEN);
         scanf(buffer, BUFFER_SIZE);
-        int commandWords = userCommandParser(command, buffer);
+        int commandWords = userCommandParser(inputCommand, buffer);
         println("");
         if(commandWords == 0)
           continue;
 
-        if(handlePipeCommand(command,commandWords) == 0){
-          handleProcess(command,commandWords);
+        if(handlePipeCommand(inputCommand,commandWords) == 0){
+          handleProcess(inputCommand,commandWords);
         }
         _memset(buffer, 0, BUFFER_SIZE);
     } 
-}
-
-void help(){
-    for(int i = 0; i < MODULES; i++){
-        printf("             ");
-        printColored(module[i].name, GREY);
-        printlnColored(module[i].description, GREY);
-    }
 }
 
 int userCommandParser(char **command, char buffer[BUFFER_SIZE]) {
@@ -145,7 +81,7 @@ unsigned int validateProgram(char * string){
 }
 
 char **createProgramParams(char **words, unsigned int len) {
-    void * ptr = (void*) alloc((2 + len) * sizeof(char *)); // + 1 for name, + 1 por null termination
+    void * ptr = (void*) alloc((2 + len) * sizeof(char *)); 
 
     if(ptr == NULL){
         printf(ERR_MEMORY_ALLOC);   
@@ -176,8 +112,8 @@ char **createProgramParams(char **words, unsigned int len) {
     return params;
 }
 
-int handlePipeCommand(char **words, unsigned int amount_of_words) {
-    if (amount_of_words != 3 || strcmp(PIPE, words[1]) != 0) {
+int handlePipeCommand(char **words, unsigned int wordsCount) {
+    if (wordsCount != 3 || strcmp(PIPE, words[1]) != 0) {
         return 0; 
     }
 
@@ -211,31 +147,39 @@ int handlePipeCommand(char **words, unsigned int amount_of_words) {
     return 2; 
 }
 
-void handleProcess(char ** words, unsigned int amount_of_words){
+void handleProcess(char ** words, unsigned int wordsCount){
     unsigned int program_pos = validateProgram(words[0]);
 
     if(program_pos == -1){
         printf(ERR_INVALID_COMMAND);
         return;
     }
-    if(amount_of_words - 1 < module[program_pos].args){
+    if(wordsCount - 1 < module[program_pos].args){
         printf(module[program_pos].args > 1 ? ERR_MISSING_PARAMS : ERR_MISSING_PARAM);
         return;
     }
 
     int i;
-    for(i=module[program_pos].args + 1; i < amount_of_words; i++){
+    for(i = module[program_pos].args + 1; i < wordsCount; i++){
         if(strcmp("&", words[i]) == 0){ 
-            registerProcess(module[program_pos].function, STDIN, BACKGROUND, createProgramParams(words, MIN_VALUE(i-1,module[program_pos].args))); //Run on Background
+            registerProcess(module[program_pos].function, STDIN, EXEC_BG, createProgramParams(words, MIN_VALUE(i - 1, module[program_pos].args))); 
             return; 
         }
     }
-    registerChildProcess(module[program_pos].function, STDIN, EXEC_FG, createProgramParams(words, MIN_VALUE(amount_of_words-1, module[program_pos].args))); 
+    registerChildProcess(module[program_pos].function, STDIN, EXEC_FG, createProgramParams(words, MIN_VALUE(wordsCount - 1, module[program_pos].args))); 
     waitChildren();
 }
 
+void help(){
+    for(int i = 0; i < MODULES; i++){
+        printf("             ");
+        printColored(module[i].name, WHITE);
+        printlnColored(module[i].description, WHITE);
+    }
+}
+
 void divZero(){
-    int a = 1 /0 ;
+    int a = 1 / 0;
 }
 
 void invOpCode(){
@@ -261,13 +205,113 @@ void clear(){
     clearScreen();
 }
 
+void mem() {
+    uint64_t memoryInfo[MEM_INFORMATION] = {0};
+    memoryManStatus(memoryInfo);
+
+    printf("Total Memory: ");
+
+    char totalMemoryBuffer[BUFFER_SIZE] = {0};
+    _strncpy(totalMemoryBuffer, int64ToStringConverter(memoryInfo[0] + memoryInfo[1]), BUFFER_SIZE);
+    println(totalMemoryBuffer);
+
+    for (int i = 0; i < MEM_INFORMATION; i++) {
+        char infoBuffer[BUFFER_SIZE] = {0};
+        printf(memoryInfoStats[i]);
+        _strncpy(infoBuffer, int64ToStringConverter(memoryInfo[i]), BUFFER_SIZE);
+        println(infoBuffer);
+    }
+}
+
+void ps(){
+	processInfo * info = (void *) alloc(20 * sizeof(processInfo)); 
+
+	if(info == NULL) {
+		printf("No more space\n");
+		return;
+	}
+
+    printlnColored("NAME   PID   STATE   PRIORITY   STACK   RSP   EXECUTION", GREEN);
+
+	uint64_t amount = getProcessInfo(info);
+
+	for(int i = 0; i < amount; i++){
+        printf(info[i].processName);
+        printf("\t| ");
+        printf(int64ToStringConverter(info[i].processId));
+        printf("\t| ");
+
+        switch(info[i].processState){
+            case ACTIVE_PROCESS: 
+                printf("Active"); break;
+            case PAUSED_PROCESS:
+                printf("Paused"); break;
+            default:
+                printf("Blocked"); break;
+        }
+        printf("\t| ");
+        printf(int64ToStringConverter(info[i].processPriority));
+        printf("\t| ");
+        printf(int64ToStringConverter(info[i].processStack));
+        printf("\t| ");
+        printf(int64ToStringConverter(info[i].processRsp));
+        printf("\t| ");
+
+        switch(info[i].processScreen) {
+            case EXEC_BG:
+                printf("BACKGROUND\n"); break;
+            case EXEC_FG:
+                printf("STDOUT\n"); break;
+            default:
+                printf("PIPE\n"); break;
+        }
+	}
+	freeMem((void*)info);
+}
+
 void loop(){
+    println("Executing please wait");
 	int pid = getPid();
 	while(1){
 		for(int i = 0; i < HALF_SECOND ; i++);
-		printf("Process ID:");
+		printf("Process id: ");
         println(int64ToStringConverter(pid));
 	}	
+}
+
+void kill(char ** args){
+  if(!isNum(args[1])) { 
+    printf("Argument must be process id.\n");
+    return;
+  }
+
+  uint64_t pid = _atoi(args[1]);
+
+  if (killProcess(pid) == INVALID_PID_CODE){
+    printf(ERR_INVALID_PID);
+  }
+
+  return;
+}
+
+void nice(char **args) {
+    if (!isNum(args[1]) && !isNum(args[2])) {
+        printf("Invalid argument! Arguments must be numbers.\n");
+        return;
+    }
+    unsigned int pid = _atoi(args[1]);
+    int priorityDelta = _atoi(args[2]);
+    niceProcess(pid, priorityDelta);
+}
+
+void block(char **args) {
+    if (!isNum(args[1])) {
+        printf("Invalid argument! Argument must be a number.\n");
+        return;
+    }
+    uint64_t pid = _atoi(args[1]);
+    pauseOrUnpauseProcess((unsigned int)pid);
+    return;
 }
 
 void cat(){
@@ -285,7 +329,7 @@ void wc(){
         }
         putChar(c);
     }
-    printf("Total input lines: ");
+    printColored("Total lines: ", GREEN);
     println(int64ToStringConverter(linesCount));
 }
 
@@ -304,65 +348,4 @@ void filter(){
         }
     }
     println(output);
-}
-
-void ps(){
-	processInfo * info = (void *) alloc(20 * sizeof(processInfo)); 
-
-	if(info == NULL) {
-		printf("No more space\n");
-		return;
-	}
-
-	uint64_t amount = getProcessInfo(info);
-
-	for(int i = 0; i < amount; i++){
-		printf("Name: ");
-        printf(info[i].processName);
-        printf("\t| PID: ");
-        printf(int64ToStringConverter(info[i].processId));
-        printf("\t| State: ");
-
-        switch(info[i].processState){
-            case ACTIVE_PROCESS: 
-                printf("Active\t| "); break;
-            case PAUSED_PROCESS:
-                printf("Paused\t| "); break;
-            default:
-                printf("Blocked\t| "); break;
-        }
-
-        printf("Priority: ");
-        printf(int64ToStringConverter(info[i].processPriority));
-        printf("\t| Stack: ");
-        printf(int64ToStringConverter(info[i].processStack));
-        printf("\t| RSP: ");
-        printf(int64ToStringConverter(info[i].processRsp));
-        printf("\t| Screen: ");
-
-        switch(info[i].processScreen) {
-            case BACKGROUND:
-                printf("Background\n"); break;
-            case STDOUT:
-                printf("STDOUT\n"); break;
-            default:
-                printf("Pipe\n"); break;
-        }
-	}
-	freeMem((void*)info);
-}
-
-void kill(char ** args){
-  if(!isNum(args[1])) { 
-    printf("Kill's argument must be number (process id).\n");
-    return;
-  }
-
-  uint64_t pid = _atoi(args[1]);
-
-  if (killProcess(pid) == INVALID_PID_CODE){
-    printf(ERR_INVALID_PID);
-  }
-
-  return;
 }

@@ -20,7 +20,7 @@ void testPriorities(){
   uint64_t i;
 
   for (i = 0; i < TOTAL_PROCESSES; i++)
-    pids[i] = registerChildProcess((uint64_t) &endlessLoopPrint, 1, 1, (uint64_t) argv);
+    pids[i] = registerChildProcess((uint64_t) &endlessLoopPrint, 1, 1, argv);
 
   bussyWait(WAIT);
   printf("\nChanging priorities...\n");
@@ -37,7 +37,7 @@ void testPriorities(){
   printf("Changing priorities while blocked...\n");
 
   for (i = 0; i < TOTAL_PROCESSES; i++)
-      niceProcess(pids[i], MEDIUM);
+    niceProcess(pids[i], MEDIUM);
 
   printf("Unblocking...\n");
 

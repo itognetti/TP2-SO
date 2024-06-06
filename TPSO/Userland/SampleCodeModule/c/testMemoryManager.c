@@ -19,7 +19,7 @@ void testMemoryManager(char * argv[]) {
   uint64_t maxMemory;
 
   if ((maxMemory = satoi(argv[1])) <= 0){
-    println("Invalid quantity of MB");
+    println("Invalid MB value");
     return;
   }
   
@@ -27,7 +27,7 @@ void testMemoryManager(char * argv[]) {
     rq = 0;
     total = 0;
 
-    printf("testMemoryManager: Allocating memory...\n");
+    printf("Allocating memory...\n");
 
     // Request as many blocks as we can
     while (rq < MAX_BLOCKS && total < maxMemory) {
@@ -35,7 +35,7 @@ void testMemoryManager(char * argv[]) {
       mm_rqs[rq].address = (void *) alloc(mm_rqs[rq].size);
 
       if(mm_rqs[rq].address == 0) {
-        printf("testMemoryManager: Out of memory\n");
+        printf("Out of memory\n");
         return;
       }
 
@@ -56,7 +56,7 @@ void testMemoryManager(char * argv[]) {
     for (i = 0; i < rq; i++){
       if (mm_rqs[i].address){
         if (!memcheck(mm_rqs[i].address, i, mm_rqs[i].size)) {
-          printf("testMemoryManager: ERROR\n");
+          printf("Error\n");
           return;
         }
       }
@@ -67,6 +67,6 @@ void testMemoryManager(char * argv[]) {
       if (mm_rqs[i].address){
           freeMem(mm_rqs[i].address);
       }
-    printf("testMemoryManager: OK\n");
+    printf("OK\n");
   }
 }

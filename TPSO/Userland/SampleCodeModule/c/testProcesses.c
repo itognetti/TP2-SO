@@ -19,22 +19,22 @@ void testProcesses(char *argv[]){
   char * argvAux[] = {0};
 
   if ((maxProcesses = satoi(argv[1])) <= 0){
-    println("Invalid quantity of processes");
+    println("Invalid total processes value");
     return;
   }
 
   p_rq p_rqs[maxProcesses];
 
-  printf("testProcesses: Creating processes \n");
+  printf("Creating processes \n");
 
   while (1) {
 
     // Create maxProcesses processes
     for (rq = 0; rq < maxProcesses; rq++) {
-      p_rqs[rq].pid = registerChildProcess((uint64_t)&endlessLoop, 1, 1, (uint64_t) argvAux);
+      p_rqs[rq].pid = registerChildProcess((uint64_t)&endlessLoop, 1, 1, argvAux);
 
       if (p_rqs[rq].pid == -1) {
-        printf("testProcesses: Error creating process\n");
+        printf("Error creating process\n");
         return;
       } else {
         p_rqs[rq].state = RUNNING;
@@ -52,7 +52,7 @@ void testProcesses(char *argv[]){
           case 0:
             if (p_rqs[rq].state == RUNNING || p_rqs[rq].state == BLOCKED) {
               if (killProcess(p_rqs[rq].pid) == -1) {
-                printf("testProcesses: Error killing process\n");
+                printf("Error killing process\n");
                 return;
               } 
               p_rqs[rq].state = KILLED;
@@ -63,7 +63,7 @@ void testProcesses(char *argv[]){
           case 1:
             if (p_rqs[rq].state == RUNNING) {
               if (pauseOrUnpauseProcess(p_rqs[rq].pid) == -1) {
-                printf("testProcesses: Error blocking process\n");
+                printf("Error blocking process\n");
                 return;
               } 
               p_rqs[rq].state = BLOCKED;
@@ -76,7 +76,7 @@ void testProcesses(char *argv[]){
       for (rq = 0; rq < maxProcesses; rq++)
         if (p_rqs[rq].state == BLOCKED && getUniform(100) % 2) {
           if (pauseOrUnpauseProcess(p_rqs[rq].pid) == -1) {
-            printf("testProcesses: Error unblocking process\n");
+            printf("Error unblocking process\n");
             return;
           }
           p_rqs[rq].state = RUNNING;
