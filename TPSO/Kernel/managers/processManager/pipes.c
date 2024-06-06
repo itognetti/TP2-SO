@@ -1,18 +1,18 @@
 #include <pipes.h>
 
 static pipeRecord pipeList[MAX_PIPES];
-static unsigned int pipesQty = 0;
+static unsigned int pipeCount  = 0;
 
 int createPipe(unsigned int id){
 	if(id == 0)				
 		return INVALID_PIPE_ID;
-	if(pipesQty == MAX_PIPES)
+	if(pipeCount  == MAX_PIPES)
 		return NO_SPACE_ERROR;
 
-	int freePos = -1;
+	int freeIndex  = -1;
 	for(int i = 0; i < MAX_PIPES; i++){
-		if(freePos == -1 && pipeList[i].pipeID == 0){
-			freePos = i;
+		if(freeIndex  == -1 && pipeList[i].pipeID == 0){
+			freeIndex  = i;
 		}
 		if(pipeList[i].pipeID == id){
 			return INVALID_PIPE_ID;
@@ -26,21 +26,21 @@ int createPipe(unsigned int id){
 		return NO_SPACE_ERROR;
 	}
 
-	pipeList[freePos].pipe = m_malloc(PIPE_SIZE);
-	if(pipeList[freePos].pipe == NULL){
+	pipeList[freeIndex ].pipe = m_malloc(PIPE_SIZE);
+	if(pipeList[freeIndex ].pipe == NULL){
 		destroySemaphore(semID1);
 		destroySemaphore(semID2);
 		return NO_SPACE_ERROR;
 	}
-	pipeList[freePos].pipeID = id;
-	pipeList[freePos].readSemID  = semID1;
-	pipeList[freePos].writeSemID  = semID2;
-	pipeList[freePos].writePos = 0;
-	pipeList[freePos].readPos = 0;
-	pipeList[freePos].qty = 0;
-	pipeList[freePos].eof = 0;
+	pipeList[freeIndex ].pipeID = id;
+	pipeList[freeIndex  ].readSemID  = semID1;
+	pipeList[freeIndex ].writeSemID  = semID2;
+	pipeList[freeIndex ].writePos = 0;
+	pipeList[freeIndex ].readPos = 0;
+	pipeList[freeIndex ].qty = 0;
+	pipeList[freeIndex ].eof = 0;
 
-	pipesQty++;
+	pipeCount ++;
 	return DONE;
 }
 
@@ -54,7 +54,7 @@ int findPipe(unsigned int id){
 }
 
 int findAvailablePipe(){
-	if(pipesQty == MAX_PIPES)
+	if(pipeCount  == MAX_PIPES)
 		return NO_SPACE_ERROR;
 
 	uint8_t found = false;
@@ -73,17 +73,12 @@ int findAvailablePipe(){
 	return pipeID;
 }
 
-int createAvailablePipe(){
-	int id = findAvailablePipe();
-
-	if(id == NO_SPACE_ERROR){
-		return NO_SPACE_ERROR;
-	}
-
-	if( createPipe(id) != DONE){
-		return NO_SPACE_ERROR;
-	}
-	return id;
+int createAvailablePipe() {
+    int id = findAvailablePipeID();
+    if (id == NO_SPACE_ERROR) {
+        return NO_SPACE_ERROR;
+    }
+    return (createPipe(id) == DONE) ? id : NO_SPACE_ERROR;
 }
 
 void destroyPipe(unsigned int id){
@@ -103,7 +98,7 @@ void destroyPipe(unsigned int id){
 	pipeList[pos].qty = 0;
 	pipeList[pos].pipe = 0;
 
-	pipesQty--;
+	pipeCount --;
 }
 
 void signalEOF(unsigned int id){
@@ -152,15 +147,15 @@ int writeToPipe(unsigned int id, const char * buffer, unsigned int count){
 }
 
 uint64_t getPipeInfo(pipesInfo * info){
-	int j = 0;
+	int activePipeCount  = 0;
 	for(int i = 0; i < MAX_PIPES; i++){
 		if(pipeList[i].pipeID != 0){
-			info[j].id = pipeList[i].pipeID;
-			info[j].usage = pipeList[i].qty;
-			info[j].readNumBlocked = getSemaphoreBlockedProcessByID(pipeList[i].readSemID, info[j].readBlockedPIDS);
-			info[j].writeNumBlocked = getSemaphoreBlockedProcessByID(pipeList[i].writeSemID, info[j].writeBlockedPIDS);
-			j++;
+			info[activePipeCount ].id = pipeList[i].pipeID;
+			info[activePipeCount ].usage = pipeList[i].qty;
+			info[activePipeCount ].readNumBlocked = getSemaphoreBlockedProcessByID(pipeList[i].readSemID, info[activePipeCount ].readBlockedPIDS);
+			info[activePipeCount ].writeNumBlocked = getSemaphoreBlockedProcessByID(pipeList[i].writeSemID, info[activePipeCount ].writeBlockedPIDS);
+			activePipeCount ++;
 		}
 	}
-	return j;
+	return activePipeCount ;
 }

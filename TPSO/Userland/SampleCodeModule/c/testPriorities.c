@@ -19,9 +19,13 @@ void testPriorities(){
   char *argv[] = {0};
   uint64_t i;
 
-  for (i = 0; i < TOTAL_PROCESSES; i++)
+  for (i = 0; i < TOTAL_PROCESSES; i++){
     pids[i] = registerChildProcess((uint64_t) &endlessLoopPrint, 1, 1, argv);
-
+    if (pids[i] == -1) {
+      printf("Error creating process");
+      return;
+    }
+  }
   bussyWait(WAIT);
   printf("\nChanging priorities...\n");
 
