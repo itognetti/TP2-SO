@@ -55,7 +55,7 @@ void waitForChildProcess() {
 }
 
 unsigned int createChildTask(uint64_t entryP, uint8_t input, uint8_t output, char ** arg0) {
-    unsigned int childPid = addTask(entryP, input, output, DEFAULT_PRIORITY, MORTAL, arg0);
+    unsigned int childPid = addTask(entryP, input, output, DEFAULT_PRIORITY, KILLEABLE, arg0);
     addChild(getCurrentPID(), childPid);
     return childPid;
 }

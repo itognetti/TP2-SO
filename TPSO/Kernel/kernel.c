@@ -99,7 +99,7 @@ int main()
 
 	m_init();
 
-	addTask((uint64_t) sampleCodeModuleAddress, STDIN, STDOUT, DEFAULT_PRIORITY, IMMORTAL, shellArgs);	// llamada a userland
+	addTask((uint64_t) sampleCodeModuleAddress, STDIN, STDOUT, DEFAULT_PRIORITY, NOT_KILLEABLE, shellArgs);	// llamada a userland
 
 	enableMultiTasking();
   return 0;

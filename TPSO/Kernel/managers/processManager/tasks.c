@@ -18,7 +18,7 @@ void idleTask(){
 }
 
 void enableMultiTasking(){
-	idleTaskPID = addTask((uint64_t)&idleTask, STDIN, BACKGROUND, DEFAULT_PRIORITY, IMMORTAL,idleArg);
+	idleTaskPID = addTask((uint64_t)&idleTask, STDIN, BACKGROUND, DEFAULT_PRIORITY, NOT_KILLEABLE, idleArg);
 	changeState(idleTaskPID, PAUSED_PROCESS);		// pause until it's required
 	executeCurrentTask();
 }
@@ -79,7 +79,7 @@ uint64_t buildStack(uint64_t entrypoint, char ** arg0, uint64_t stackEnd){
 	return stackStart;
 }
 
-int addTask(uint64_t entrypoint, uint8_t input, uint8_t output, uint8_t priority, uint8_t immortal, char ** arg0){
+int addTask(uint64_t entrypoint, uint8_t input, uint8_t output, uint8_t priority, uint8_t notKilleable, char ** arg0){
 	if(currentDimTasks >= TOTAL_TASKS){
 		return ERROR_NO_SPACE_FOR_TASK;
 	}
@@ -101,7 +101,7 @@ int addTask(uint64_t entrypoint, uint8_t input, uint8_t output, uint8_t priority
 	tasks[pos].PID = newPID++;
 	tasks[pos].state = ACTIVE_PROCESS;
 	tasks[pos].priority = priority;
-	tasks[pos].immortal = immortal;
+	tasks[pos].notKilleable = notKilleable;
 
 	tasks[pos].stackStart = stackStart;
 	tasks[pos].stackEnd = stackEnd;
@@ -177,7 +177,7 @@ void pauseScreenProcess(unsigned int screen){
 void killScreenProcesses(){
 	uint8_t currentTaskKilled = false;
 	for(int i = 0; i < TOTAL_TASKS; i++){
-		if(tasks[i].state != DEAD_PROCESS &&  tasks[i].immortal != IMMORTAL ){
+		if(tasks[i].state != DEAD_PROCESS &&  tasks[i].notKilleable != NOT_KILLEABLE ){
 			destroyProcess(i);
 
 			if(i == currentTask){
@@ -195,10 +195,10 @@ int pauseOrUnpauseProcess(unsigned int pid){
 	if(pos < 0)
 		return NO_TASK_FOUND;
 
-	if(tasks[pos].immortal)
+	if(tasks[pos].notKilleable)
 		return TASK_NOT_ALTERED;
 
-	tasks[pos].state = tasks[pos].state==PAUSED_PROCESS ? ACTIVE_PROCESS : PAUSED_PROCESS; 
+	tasks[pos].state = tasks[pos].state == PAUSED_PROCESS ? ACTIVE_PROCESS : PAUSED_PROCESS; 
 
 	if(pos == currentTask){
 		forceChangeTask();
@@ -212,7 +212,7 @@ int removeTask(unsigned int PID){
 	if(pos < 0)
 		return NO_TASK_FOUND;
 
-	if(tasks[pos].immortal)
+	if(tasks[pos].notKilleable)
 		return TASK_NOT_ALTERED;
 
 	destroyProcess(pos);
@@ -254,8 +254,7 @@ uint64_t nextTask(uint64_t stackPointer, uint64_t stackSegment){
 	
 	char found = 0;
 	unsigned int counter = 0;
-	while( !found && counter < currentDimTasks ){			
-		
+	while(!found && counter < currentDimTasks){			
 		currentTask = (currentTask +  1) % TOTAL_TASKS;
 
 		if(tasks[currentTask].state != DEAD_PROCESS)		 
@@ -270,21 +269,19 @@ uint64_t nextTask(uint64_t stackPointer, uint64_t stackSegment){
 	if(counter == currentDimTasks){				// if all tasks are paused -> unpause idle task
 		currentTask = findTask(idleTaskPID);
 		changeState(idleTaskPID, ACTIVE_PROCESS);
-	}
-	else if(tasks[currentTask].PID != idleTaskPID){			// if idle task is not paused -> pause it
+	}else if(tasks[currentTask].PID != idleTaskPID){			// if idle task is not paused -> pause it
 		changeState(idleTaskPID, PAUSED_PROCESS);
 	}
 
 	currentRemainingTicks = 0;
-
 	return tasks[currentTask].stackPointer;
 }
 
 int getProcessInfo(processInfo * info){
-	int j=0;
-	for(int i=0; i<TOTAL_TASKS; i++){
+	int j = 0;
+	for(int i = 0; i < TOTAL_TASKS; i++){
 		if(tasks[i].state != DEAD_PROCESS){
-			if(tasks[i].params !=NULL){
+			if(tasks[i].params != NULL){
 				info[j].name = tasks[i].params[0];		
 			}
 			info[j].id = tasks[i].PID;

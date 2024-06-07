@@ -18,8 +18,8 @@
 #define ERROR_SCREEN_NOT_AVAILABLE 2
 
 #define DEFAULT_PRIORITY 1
-#define IMMORTAL 1
-#define MORTAL 0
+#define NOT_KILLEABLE 1
+#define KILLEABLE 0
 
 #define DEAD_PROCESS 0
 #define ACTIVE_PROCESS 1 
@@ -65,7 +65,7 @@ typedef struct PCB{ //Process Control Block
 
 		uint8_t state;
 		uint8_t priority;				// amount of ticks it has to run
-		uint8_t immortal;				// whether it can or can't be killed/blocked/paused
+		uint8_t notKilleable;				// whether it can or can't be killed/blocked/paused
 		
 		uint8_t output;
 		uint8_t input;
@@ -85,7 +85,7 @@ uint8_t getCurrentInput();
 uint8_t getState(unsigned int PID);
 int findTask(unsigned int PID);
 uint64_t buildStack(uint64_t entrypoint, char ** arg0, uint64_t stackEnd);
-int addTask(uint64_t entrypoint, uint8_t input, uint8_t output, uint8_t priority, uint8_t immortal, char ** arg0);
+int addTask(uint64_t entrypoint, uint8_t input, uint8_t output, uint8_t priority, uint8_t notKilleable, char ** arg0);
 void freeParams(char ** params);
 void destroyProcess(unsigned int pos);
 void removeCurrentTask();

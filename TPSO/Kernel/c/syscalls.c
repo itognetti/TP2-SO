@@ -153,7 +153,7 @@ uint64_t sys_get_pid(){
 }
 
 uint64_t sys_register_process(uint64_t entryPoint, uint8_t input, uint8_t output, char ** arg0){
-    return addTask(entryPoint, input, output, DEFAULT_PRIORITY, MORTAL, arg0);
+    return addTask(entryPoint, input, output, DEFAULT_PRIORITY, KILLEABLE, arg0);
 }
 
 uint64_t sys_pause_or_unpause_process(unsigned int processPid){
