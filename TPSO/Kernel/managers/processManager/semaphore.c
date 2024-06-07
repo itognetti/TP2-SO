@@ -1,142 +1,7 @@
 #include "../../include/semaphore.h"
 
-static semaphoreData semaphoreList[MAX_SEM] = {{0}};
-static unsigned int activeSem = 0;
-
-int createSemaphore(unsigned int id, unsigned int value){
-	if(id == 0){
-		return INVALID_SEM_ID_ERROR;
-	}
-	if(activeSem == MAX_SEM){
-		return NO_SPACE_ERROR;
-	}
-
-	int freePos = -1;
-	for(int i = 0; i < MAX_SEM; i++){
-		if(freePos == -1 && semaphoreList[i].id == 0){
-			freePos = i;
-		}
-		if(semaphoreList[i].id == id){
-			return INVALID_SEM_ID_ERROR;
-		}
-	}
-	createQueue(&(semaphoreList[freePos].queue), MAX_PROCESS);
-	semaphoreList[freePos].id = id;
-	semaphoreList[freePos].value = value;
-	activeSem++;
-
-	return DONE;
-}
-
-void destroySemaphore(unsigned int id){
-	int pos = findSemaphore(id);
-	if(pos != INVALID_SEM_ID_ERROR){
-		lock(&(semaphoreList[pos].lock));
-		semaphoreList[pos].id = 0;
-		semaphoreList[pos].value = 0;
-		unlock(&(semaphoreList[pos].lock));
-		destroyQueue(&(semaphoreList[pos].queue));
-	}
-	return;
-}
-
-int findSemaphore(unsigned int id){
-	for(int i = 0; i < MAX_SEM; i++){
-		if(semaphoreList[i].id == id){
-			return i;
-		}
-	}
-	return INVALID_SEM_ID_ERROR;
-}
-
-unsigned int waitSemaphore(unsigned int id){
-	int pos = findSemaphore(id);
-	if(pos == INVALID_SEM_ID_ERROR){
-		return INVALID_SEM_ID_ERROR;
-	}
-	lock(&(semaphoreList[pos].lock));
-	if(semaphoreList[pos].value > 0){
-		semaphoreList[pos].value--;
-	}
-	else{
-		int PID = getCurrentPID();
-		changeState(PID, WAITING_FOR_SEM);
-		enqueue(&(semaphoreList[pos].queue), PID);
-		unlock(&(semaphoreList[pos].lock));
-		forceChangeTask();
-		return true;
-	}
-	unlock(&(semaphoreList[pos].lock));
-
-	return true;
-}
-
-int getAvailableSemaphore(){
-	if(activeSem == MAX_SEM)
-		return NO_SPACE_ERROR;
-
-	uint8_t found = 0;
-	int id = 10;  
-
-	while(!found){
-		found = 1;
-		for(int i = 0 ; i < MAX_SEM; i++){
-			if(semaphoreList[i].id == id){
-				found = 0;
-				id++;
-				break;
-			}
-		}
-	}
-	return id;
-}
-
-int makeSemaphoreAvailable(unsigned int value){
-	int id = getAvailableSemaphore();
-
-	if(id == NO_SPACE_ERROR){
-		return NO_SPACE_ERROR;
-	}
-
-	int result = createSemaphore(id, value);
-	if(result == NO_SPACE_ERROR){
-		return NO_SPACE_ERROR;
-	}
-	if(result == INVALID_SEM_ID_ERROR){
-		return INVALID_SEM_ID_ERROR;
-	}
-	return id;
-}
-
-uint64_t getSemaphoreInfo(semaphoreInfo * info){
-	int j = 0;
-	for(int i = 0; i < MAX_SEM; i++){
-		if(semaphoreList[i].id != 0){
-			info[j].id = semaphoreList[i].id;
-			info[j].value = semaphoreList[i].value;
-			info[j].numBlocked = getSemaphoreBlockedProcess(i, info[j].blockedPIDS);
-			j++;
-		}
-	}
-	return j;
-}
-
-unsigned int getSemaphoreBlockedProcess(unsigned int pos, unsigned int * blockedPIDS){
-	if(pos >= MAX_SEM){
-		return 0;
-	}
-
-	if(getQueueSize(&(semaphoreList[pos].queue)) > 0){
-		unsigned int pos;
-		queueIterator(&(semaphoreList[pos].queue), &pos);
-		int j = 0;
-		for( ; queueHasNext(&(semaphoreList[pos].queue), &pos); j++ ){
-			blockedPIDS[j] = (unsigned int) queueNext(&(semaphoreList[pos].queue), &pos);
-		}
-		return j;
-	}
-	return 0;
-}
+static semaphoreData semaphoreDataArray[MAX_SEM] = {{0}};
+static unsigned int semCount = 0;
 
 unsigned int getSemaphoreBlockedProcessByID(unsigned int semaphoreID, unsigned int * blockedPIDS){
 	int pos = findSemaphore(semaphoreID);
@@ -146,19 +11,155 @@ unsigned int getSemaphoreBlockedProcessByID(unsigned int semaphoreID, unsigned i
 	return getSemaphoreBlockedProcess((unsigned int)pos, blockedPIDS);
 }
 
+unsigned int waitForSemaphore(unsigned int semID) {
+    int semIndex = findSemaphore(semID);
+    if (semIndex == INVALID_SEM_ID_ERROR) {
+        return INVALID_SEM_ID_ERROR;
+    }
+
+    semaphoreData *sem = &semaphoreDataArray[semIndex];
+    lock(&(sem->lock));
+
+    if (sem->value > 0) {
+        sem->value--;
+    } else {
+        int currentPID = getCurrentPID();
+        changeState(currentPID, WAITING_FOR_SEM);
+        enqueue(&(sem->queue), currentPID);
+        unlock(&(sem->lock));
+        forceChangeTask();
+        return true;
+    }
+
+    unlock(&(sem->lock));
+    return true;
+}
+int initializeSemaphore(unsigned int semID, unsigned int initialValue) {
+    if (semID == 0 || semCount == MAX_SEM) {
+        return (semID == 0) ? INVALID_SEM_ID_ERROR : NO_SPACE_ERROR;
+    }
+
+    int freeIndex = -1;
+
+    for (int i = 0; i < MAX_SEM; i++) {
+        if (semaphoreDataArray[i].id == semID) {
+            return INVALID_SEM_ID_ERROR;
+        }
+        if (freeIndex == -1 && semaphoreDataArray[i].id == 0) {
+            freeIndex = i;
+        }
+    }
+
+    if (freeIndex == -1) {
+        return NO_SPACE_ERROR;
+    }
+
+    createQueue(&(semaphoreDataArray[freeIndex].queue), MAX_PROCESS);
+    semaphoreDataArray[freeIndex].id = semID;
+    semaphoreDataArray[freeIndex].value = initialValue;
+    semCount++;
+
+    return DONE;
+}
+void removeSemaphore(unsigned int semID) {
+    int semIndex = findSemaphore(semID);
+    if (semIndex == INVALID_SEM_ID_ERROR) {
+        return;
+    }
+    lock(&(semaphoreDataArray[semIndex].lock));
+    semaphoreDataArray[semIndex].id = 0;
+    semaphoreDataArray[semIndex].value = 0;
+    unlock(&(semaphoreDataArray[semIndex].lock));
+    destroyQueue(&(semaphoreDataArray[semIndex].queue));
+    return;
+}
+
+int findSemaphore(unsigned int semID) {
+    for (semaphoreData *sem = semaphoreDataArray; sem < semaphoreDataArray + MAX_SEM; sem++) {
+        if (sem->id == semID) {
+            return sem - semaphoreDataArray;
+        }
+    }
+    return INVALID_SEM_ID_ERROR;
+}
+
+
+
+int setSemaphoreWithValue(unsigned int value) {
+    int id = getAvailableSemaphore();
+    
+    if (id < 0) {
+        return id; 
+    }
+
+    int result = createSemaphore(id, value);
+    return (result == DONE) ? id : result; 
+}
+
+uint64_t getSemaphoreInfo(semaphoreInfo * info){
+	int j = 0;
+	for(int i = 0; i < MAX_SEM; i++){
+		if(semaphoreDataArray[i].id != 0){
+			info[j].id = semaphoreDataArray[i].id;
+			info[j].value = semaphoreDataArray[i].value;
+			info[j].numBlocked = getSemaphoreBlockedProcess(i, info[j].blockedPIDS);
+			j++;
+		}
+	}
+	return j;
+}
+
+unsigned int getSemaphoreBlockedProcess(unsigned int pos, unsigned int *blockedPIDS) {
+    if (pos >= MAX_SEM) {
+        return 0;
+    }
+    int queueSize = getQueueSize(&(semaphoreDataArray[pos].queue));
+    if (queueSize > 0) {
+        unsigned int blockedProcesses[queueSize];
+        queuePeekAll(&(semaphoreDataArray[pos].queue), blockedProcesses);
+        for (int i = 0; i < queueSize; i++) {
+            blockedPIDS[i] = blockedProcesses[i];
+        }
+        return queueSize;
+    }
+    return 0;
+}
+
+
+
 unsigned int signalSemaphore(unsigned int ID){
 	int pos = findSemaphore(ID);
 	if(pos == INVALID_SEM_ID_ERROR){
 		return INVALID_SEM_ID_ERROR;
 	}
 
-	lock(&(semaphoreList[pos].lock));
-	if(getQueueSize(&(semaphoreList[pos].queue)) > 0){
-		unsigned int blockedPID = dequeue(&(semaphoreList[pos].queue));
+	lock(&(semaphoreDataArray[pos].lock));
+	if(getQueueSize(&(semaphoreDataArray[pos].queue)) > 0){
+		unsigned int blockedPID = dequeue(&(semaphoreDataArray[pos].queue));
 		changeState(blockedPID, ACTIVE_PROCESS);
 	}else{
-		semaphoreList[pos].value++;
+		semaphoreDataArray[pos].value++;
 	}
-	unlock(&(semaphoreList[pos].lock));
+	unlock(&(semaphoreDataArray[pos].lock));
 	return true;
+}
+
+int getAvailableSemaphore(){
+	if(semCount == MAX_SEM)
+		return NO_SPACE_ERROR;
+
+	uint8_t found = 0;
+	int id = 10;  
+
+	while(!found){
+		found = 1;
+		for(int i = 0 ; i < MAX_SEM; i++){
+			if(semaphoreDataArray[i].id == id){
+				found = 0;
+				id++;
+				break;
+			}
+		}
+	}
+	return id;
 }

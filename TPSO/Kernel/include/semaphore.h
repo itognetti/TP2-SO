@@ -27,12 +27,12 @@ typedef struct semaphoreData{
 	queueData queue;
 }semaphoreData;
 
-int createSemaphore(unsigned int id, unsigned int value);
-void destroySemaphore(unsigned int id);
+int initializeSemaphore(unsigned int id, unsigned int value);
+void removeSemaphore(unsigned int id);
 int findSemaphore(unsigned int id);
 unsigned int waitSemaphore(unsigned int id);
 int getAvailableSemaphore();
-int makeSemaphoreAvailable(unsigned int value);
+int setSemaphoreWithValue(unsigned int value);
 uint64_t getSemaphoreInfo(semaphoreInfo * info);
 unsigned int getSemaphoreBlockedProcess(unsigned int pos, unsigned int * blockedPIDS);
 unsigned int getSemaphoreBlockedProcessByID(unsigned int semaphoreID, unsigned int * blockedPIDS);
