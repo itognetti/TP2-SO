@@ -11,46 +11,10 @@
 #define STDOUT 1
 #define STDERR 2
 
-#define SYS_READ 0
-#define SYS_WRITE 1
-#define SYS_CLEAR 2
-#define SYS_TIME 3
-#define SYS_HOLDER 4
-#define SYS_BEEP 5
-#define SYS_INFO_REG 6
-#define SYS_DRAW 7
-
-#define SYS_ALLOC 8
-#define SYS_FREE 9
-#define SYS_MEMORY_MAN_STATUS 10
-#define SYS_PRINT_MEMORY 11
-
-#define SYS_REGISTER_PIPE 12
-#define SYS_REGISTER_PIPE_AVAILABLE 13
-#define SYS_READ_PIPE 14
-#define SYS_WRITE_PIPE 15
-#define SYS_INFO_PIPE 16
-#define SYS_DESTROY_PIPE 17
-
-#define SYS_SEM_REG 18
-#define SYS_SEM_REG_AVAILABLE 19
-#define SYS_SEM_WAIT 20
-#define SYS_SEM_SIGNAL 21
-#define SYS_SEM_INFO 22
-#define SYS_SEM_DESTROY 23
-
-#define SYS_CHILD_PROC_REGISTER 24
-#define SYS_CHILD_WAIT 25
-#define SYS_GET_PID 26
-
-#define SYS_REGISTER_PROC 27
-#define SYS_ALIVE_PROC 28
-#define SYS_PAUSE_OR_UNPAUSE_PROC 29
-#define SYS_INFO_PROC 30
-#define SYS_KILL_PROC 31
-
-#define SYS_NICE 32
-#define SYS_RENOUNCE_CPU 33
+enum {SYS_READ = 0, SYS_WRITE, SYS_CLEAR, SYS_TIME, SYS_HOLDER, SYS_BEEP, SYS_INFO_REG, SYS_DRAW, SYS_ALLOC, SYS_FREE, SYS_MEMORY_MAN_STATUS, 
+    SYS_PRINT_MEMORY, SYS_REGISTER_PIPE, SYS_REGISTER_PIPE_AVAILABLE, SYS_READ_PIPE, SYS_WRITE_PIPE, SYS_INFO_PIPE, SYS_DESTROY_PIPE,
+    SYS_SEM_REG, SYS_SEM_REG_AVAILABLE, SYS_SEM_WAIT, SYS_SEM_SIGNAL, SYS_SEM_INFO, SYS_SEM_DESTROY, SYS_CHILD_PROC_REGISTER, SYS_CHILD_WAIT,
+    SYS_GET_PID, SYS_REGISTER_PROC, SYS_ALIVE_PROC, SYS_PAUSE_OR_UNPAUSE_PROC, SYS_INFO_PROC,SYS_KILL_PROC, SYS_NICE, SYS_RENOUNCE_CPU};
 
 extern uint64_t _syscall(uint64_t syscall, ...);
 
@@ -67,17 +31,20 @@ uint64_t alloc(int len);
 uint64_t freeMem(void * ptr);
 uint64_t memoryManStatus(uint64_t * buffer);
 uint64_t printMem(uint64_t pos, char * buffer);
+
 uint64_t registerPipe(unsigned int pipeId);
 uint64_t registerPipeAvailable();
 uint64_t readPipe(int pipeId, char * dest, int count);
 uint64_t writePipe(int pipeId, const char * src, int count);
 uint64_t pipeInfo(pipesInfo * info);
 void destroyPipe( int pipeId);
+
 uint64_t registerSemaphore(uint64_t semId, unsigned int val);
 uint64_t registerSemaphoreAvailable(unsigned int val);
 uint64_t signalSemaphore(uint64_t semId);
 uint64_t waitSemaphore(uint64_t semId);
 void destroySemaphore(uint64_t semId);
+
 uint64_t registerChildProcess(uint64_t entryP, uint8_t input, uint8_t output, char ** arg0);
 void waitChildren();
 uint64_t getPid();

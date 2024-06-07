@@ -123,3 +123,11 @@ uint64_t printMem(uint64_t pos, char * buffer){
 uint64_t registerPipe(unsigned int pipeId){
     return _syscall(SYS_REGISTER_PIPE, pipeId);
 }
+
+uint64_t renounceCpu(){
+    return _syscall(SYS_RENOUNCE_CPU);
+}
+
+uint64_t aliveProcess(unsigned int processPid){
+    return _syscall(SYS_ALIVE_PROC, processPid);
+}

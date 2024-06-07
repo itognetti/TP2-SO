@@ -74,7 +74,7 @@ int findAvailablePipe(){
 }
 
 int createAvailablePipe() {
-    int id = findAvailablePipeID();
+    int id = findAvailablePipe();
     if (id == NO_SPACE_ERROR) {
         return NO_SPACE_ERROR;
     }

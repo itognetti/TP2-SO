@@ -104,13 +104,5 @@ void addBlock(header_t *block, uint64_t newSize) {
     }
     mem_st.allocatedBlocks += 1;
 }
-/*
-void printMemStatus(uint64_t * buffer){
-    memStatus * memStat = m_status();
-    buffer[0] = memStat->allocatedBytes;
-    buffer[1] = memStat->freeBytes;
-    buffer[2] = memStat->allocatedBytes;
-}
-*/
 
 #endif
