@@ -16,12 +16,12 @@ typedef struct waitData {
     uint8_t state;
 } waitData;
 
-uint8_t hasChildren(unsigned int pid);
-void addChildren(unsigned int fatherPid, unsigned int childPid);
-void removeChildren(unsigned int pid);
-void waitForChildren();
-uint8_t childrenFinished(unsigned int pid);
-unsigned int addChildrenTask(uint64_t entryP, uint8_t input, uint8_t output, char ** arg0);
-void signalFinished(unsigned int pid);
+uint8_t hasChildProcesses(unsigned int pid);
+void assignChildProcess(unsigned int fatherPid, unsigned int childPid);
+void removeChildProcess(unsigned int pid);
+void waitForChildProcess();
+uint8_t childProcessesCompleted(unsigned int pid);
+unsigned int createChildTask(uint64_t entryP, uint8_t input, uint8_t output, char ** arg0);
+void reportChildProcessFinished(unsigned int pid);
 
 #endif

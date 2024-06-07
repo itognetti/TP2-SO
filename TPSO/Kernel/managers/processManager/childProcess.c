@@ -1,70 +1,71 @@
 #include <childProcess.h>
 
-static waitData taskList[MAX_WAIT_TASKS] = {{0}};
+static waitData processData[MAX_WAIT_TASKS] = {{0}};
 
-uint8_t hasChildren(unsigned int pid){
-    for(int i = 0; i < MAX_WAIT_TASKS; i++){
-        if(taskList[i].fatherPid == pid){
-            return 1;
-        }
-    }
-    return 0;
-}
-
-void addChildren(unsigned int fatherPid, unsigned int childPid){
-    for(int i = 0; i < MAX_WAIT_TASKS; i++){
-        if(taskList[i].state == NOT_TRACKING){
-            taskList[i].childPid = childPid;
-            taskList[i].fatherPid = fatherPid;
-            taskList[i].state = RUNNING;
-            return;
-        }
-    }
-}
-
-void removeChildren(unsigned int pid){
-    for(int i = 0; i < MAX_WAIT_TASKS; i++){
-        if(taskList[i].fatherPid == pid){
-            taskList[i].childPid = 0;
-            taskList[i].fatherPid = 0;
-            taskList[i].state = NOT_TRACKING;
-        }
-    }
-}
-
-void waitForChildren(){
-    int pid = getCurrentPID();
-    if(!hasChildren(pid)){
-        return;
-    }
-    changeState(pid, WAITING_FOR_CHILD);
-    forceChangeTask();
-}
-
-uint8_t childrenFinished(unsigned int pid){
-    for(int i = 0; i < MAX_WAIT_TASKS; i++){
-        if(taskList[i].state == RUNNING && taskList[i].fatherPid == pid){
+uint8_t childProcessesCompleted(unsigned int pid) {
+    for (waitData *data = processData; data < processData + MAX_WAIT_TASKS; data++) {
+        if (data->state == RUNNING && data->fatherPid == pid) {
             return 0;
         }
     }
     return 1;
 }
 
-unsigned int addChildrenTask(uint64_t entryP, uint8_t input, uint8_t output, char ** arg0){
-    unsigned int childPid = addTask(entryP, input, output, DEFAULT_PRIORITY, MORTAL, arg0);
-    addChildren(getCurrentPID(), childPid);
-    return childPid;
+uint8_t hasChildProcesses(unsigned int pid){
+  for (waitData *data = processData; data < processData + MAX_WAIT_TASKS; data++) {
+        if (data->fatherPid == pid) {
+            return 1;
+        }
+    }
+    return 0;
 }
 
-void signalFinished(unsigned int pid){
-    for(int i = 0; i < MAX_WAIT_TASKS; i++){
-        if(taskList[i].state == RUNNING && taskList[i].childPid == pid){
-            taskList[i].state = FINISHED;
-            unsigned int fatherPid = taskList[i].fatherPid;
-            if(childrenFinished(fatherPid)){
+
+void removeChildProcess(unsigned int pid) {
+    for (waitData *data = processData; data < processData + MAX_WAIT_TASKS; data++) {
+        if (data->fatherPid == pid) {
+            data->childPid = 0;
+            data->fatherPid = 0;
+            data->state = NOT_TRACKING;
+        }
+    }
+}
+
+void reportChildProcessFinished(unsigned int pid) {
+    for (waitData *data = processData; data < processData + MAX_WAIT_TASKS; data++) {
+        if (data->state == RUNNING && data->childPid == pid) {
+            data->state = FINISHED;
+            unsigned int fatherPid = data->fatherPid;
+            if (areChildrenFinished(fatherPid)) {
                 removeChildren(fatherPid);
                 changeState(fatherPid, ACTIVE_PROCESS);
             }
+            return;
+        }
+    }
+}
+
+void waitForChildProcess() {
+    int pid = getCurrentPID();
+    if (!hasChildren(pid)) {
+        return;
+    }
+    changeState(pid, WAITING_FOR_CHILD);
+    forceChangeTask();
+}
+
+unsigned int createChildTask(uint64_t entryP, uint8_t input, uint8_t output, char ** arg0) {
+    unsigned int childPid = addTask(entryP, input, output, DEFAULT_PRIORITY, MORTAL, arg0);
+    addChild(getCurrentPID(), childPid);
+    return childPid;
+}
+
+void assignChildProcess(unsigned int fatherPid, unsigned int childPid) {
+    for (waitData *data = processData; data < processData + MAX_WAIT_TASKS; data++) {
+        if (data->state == NOT_TRACKING) {
+            data->childPid = childPid;
+            data->fatherPid = fatherPid;
+            data->state = RUNNING;
             return;
         }
     }

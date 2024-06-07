@@ -18,6 +18,7 @@
         "shell.h": "c",
         "typeinfo": "c",
         "stdint.h": "c",
-        "__locale": "c"
+        "__locale": "c",
+        "childprocess.h": "c"
     }
 }

@@ -28,14 +28,14 @@ typedef struct pipeRecord{
 	uint8_t eof;
 }pipeRecord;
 
-int createPipe(unsigned int ID);
-int findPipe(unsigned int ID);
-int findAvailablePipe();
-int createAvailablePipe();
-void destroyPipe(unsigned int ID);
-void signalEOF(unsigned int ID);
-int readFromPipe(unsigned int ID, char * dest, unsigned int count);
-int writeToPipe(unsigned int ID, const char * src, unsigned int count);
-uint64_t getPipeInfo(pipesInfo * info);
+int initializePipe(unsigned int ID);
+int getPipeIndex(unsigned int ID);
+int generateAvailablePipeID();
+int setupAvailablePipe();
+void removePipe(unsigned int ID);
+void setPipeEOF(unsigned int ID);
+int readPipeData(unsigned int ID, char * dest, unsigned int count);
+int writePipeData(unsigned int ID, const char * src, unsigned int count);
+uint64_t getPipeDetails(pipesInfo * info);
 
 #endif
