@@ -25,7 +25,7 @@ void myProcessInc(char *argv[]) {
   }
 }
 
-void testSync(char *argv[]) { //{n, use_sem, 0}
+void testSync(char *argv[]) { 
   int increments, processes, semUse;
 
   if((increments = satoi(argv[1])) <= 0){

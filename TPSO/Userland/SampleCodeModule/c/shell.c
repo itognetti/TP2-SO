@@ -273,8 +273,8 @@ void loop(){
     println("Executing please wait");
 	int pid = getPid();
 	while(1){
-		for(int i = 0; i < HALF_SECOND ; i++);
-		printf("Process id: ");
+		for(int i = 0; i < WAIT_SECONDS ; i++);
+		printf("Hello from process id: ");
         println(int64ToStringConverter(pid));
 	}	
 }
@@ -317,6 +317,7 @@ void block(char **args) {
 void cat(){
     char buff[BUFFER_SIZE] = {0};
     scanf(buff, BUFFER_SIZE);
+    println(" ");
     println(buff);
 }
 
