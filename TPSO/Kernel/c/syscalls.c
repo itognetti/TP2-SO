@@ -26,7 +26,7 @@ void sys_write(int fd, char * string, int row, int col, int color){
             }
             break;
         default:
-            writeToPipe(fd, string, strlen(string));
+            writePipeData(fd, string, strlen(string));
     }
 }
 
@@ -35,7 +35,7 @@ void sys_read(int fd, char *buffer, int length){
         readKeyboard(buffer, length);
         return;
     }
-    readFromPipe(fd, buffer, length);
+    readPipeData(fd, buffer, length);
 }
 
 void sys_clear(){
@@ -93,35 +93,35 @@ void sys_free(void * pointer) {
 }
 
 uint64_t sys_create_pipe_available(){
-    return createAvailablePipe();
+    return setupAvailablePipe();
 }
 
 uint64_t sys_create_pipe(unsigned int pipeId){
-    return createPipe(pipeId);
+    return initializePipe(pipeId);
 }
 
 uint64_t sys_write_to_pipe(unsigned int pipeId, const char * source, unsigned int count){
-    return writeToPipe(pipeId, source, count);
+    return writePipeData(pipeId, source, count);
 }
 
 uint64_t sys_read_from_pipe(unsigned int pipeId, char * destination, unsigned int count){
-    return readFromPipe(pipeId, destination, count);
+    return readPipeData(pipeId, destination, count);
 }    
 
 uint64_t sys_get_pipe_info(pipesInfo * info){
-    return getPipeInfo(info);
+    return getPipeDetails(info);
 }
 
 void sys_destroy_pipe(unsigned int pipeId){
-    destroyPipe(pipeId);
+    removePipe(pipeId);
 }
 
 uint64_t sys_create_sem(unsigned int semaphoreId, unsigned int initialValue){
-    return createSemaphore(semaphoreId, initialValue);
+    return initializeSemaphore(semaphoreId, initialValue);
 }
 
 uint64_t sys_create_sem_available(unsigned int initialValue){
-    return makeSemaphoreAvailable(initialValue);
+    return setSemaphoreWithValue(initialValue);
 }
 
 uint64_t sys_signal_sem(unsigned int semaphoreId){
@@ -129,11 +129,11 @@ uint64_t sys_signal_sem(unsigned int semaphoreId){
 }
 
 uint64_t sys_wait_sem(unsigned int semaphoreId){
-    return waitSemaphore(semaphoreId);
+    return waitForSemaphore(semaphoreId);
 }
 
 void sys_destroy_sem(unsigned int semaphoreId){
-    destroySemaphore(semaphoreId);
+    removeSemaphore(semaphoreId);
 }
 
 uint64_t sys_get_semaphore_info(semaphoreInfo * info){
@@ -141,11 +141,11 @@ uint64_t sys_get_semaphore_info(semaphoreInfo * info){
 }
 
 uint64_t sys_register_child_process(uint64_t entryPoint, uint8_t input, uint8_t output, char ** arg0){
-    return addChildrenTask(entryPoint, input, output, arg0);
+    return createChildTask(entryPoint, input, output, arg0);
 }
 
 void sys_wait_for_children(){
-    waitForChildren();
+    waitForChildProcess();
 }
 
 uint64_t sys_get_pid(){

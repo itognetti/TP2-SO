@@ -36,8 +36,8 @@ void reportChildProcessFinished(unsigned int pid) {
         if (data->state == RUNNING && data->childPid == pid) {
             data->state = FINISHED;
             unsigned int fatherPid = data->fatherPid;
-            if (areChildrenFinished(fatherPid)) {
-                removeChildren(fatherPid);
+            if (childProcessesCompleted(fatherPid)) {
+                removeChildProcess(fatherPid);
                 changeState(fatherPid, ACTIVE_PROCESS);
             }
             return;
@@ -47,7 +47,7 @@ void reportChildProcessFinished(unsigned int pid) {
 
 void waitForChildProcess() {
     int pid = getCurrentPID();
-    if (!hasChildren(pid)) {
+    if (!hasChildProcesses(pid)) {
         return;
     }
     changeState(pid, WAITING_FOR_CHILD);
@@ -56,7 +56,7 @@ void waitForChildProcess() {
 
 unsigned int createChildTask(uint64_t entryP, uint8_t input, uint8_t output, char ** arg0) {
     unsigned int childPid = addTask(entryP, input, output, DEFAULT_PRIORITY, KILLEABLE, arg0);
-    addChild(getCurrentPID(), childPid);
+    assignChildProcess(getCurrentPID(), childPid);
     return childPid;
 }
 

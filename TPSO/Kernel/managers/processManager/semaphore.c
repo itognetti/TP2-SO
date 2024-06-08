@@ -92,7 +92,7 @@ int setSemaphoreWithValue(unsigned int value) {
         return id; 
     }
 
-    int result = createSemaphore(id, value);
+    int result = initializeSemaphore(id, value);
     return (result == DONE) ? id : result; 
 }
 

@@ -19,7 +19,7 @@ uint64_t dequeue(queueData * queue);
 unsigned int getQueueSize(queueData * queue);
 uint8_t containsQueue(queueData * queue, uint64_t elem);
 void destroyQueue(queueData * queue);
-void queueIterator(queueData * queue,unsigned int * ptr);
+void queuePeekAll(queueData * queue, unsigned int * ptr);
 uint8_t queueHasNext(queueData * queue, unsigned int * ptr);
 uint64_t queueNext(queueData * queue, unsigned int * ptr);
 

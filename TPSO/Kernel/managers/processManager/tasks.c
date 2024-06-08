@@ -126,7 +126,7 @@ void freeParams(char ** params){
 }
 
 void destroyProcess(unsigned int pos){
-	signalFinished(tasks[pos].PID);
+	reportChildProcessFinished(tasks[pos].PID);
 	freeParams(tasks[pos].params);
 	tasks[pos].state = DEAD_PROCESS;
 	currentDimTasks--;
@@ -140,7 +140,7 @@ void removeCurrentTask(){
 	
 	uint8_t out = tasks[currentTask].output;
 	if(out != STDOUT){
-		signalEOF(out);
+		setPipeEOF(out);
 	}
 	forceChangeTask();
 }

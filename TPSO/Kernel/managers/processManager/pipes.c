@@ -44,17 +44,17 @@ int initializePipe(unsigned int id) {
             return INVALID_PIPE_ID;
         }
     }
-    int readSemaphore  = makeSemaphoreAvailable(0);
-    int writeSemaphore  = makeSemaphoreAvailable(PIPE_SIZE);
+    int readSemaphore  = setSemaphoreWithValue(0);
+    int writeSemaphore  = setSemaphoreWithValue(PIPE_SIZE);
     if (readSemaphore  == INVALID_SEM_ID_ERROR || writeSemaphore  == INVALID_SEM_ID_ERROR) {
-        destroySemaphore(readSemaphore );
-        destroySemaphore(writeSemaphore );
+        removeSemaphore(readSemaphore );
+        removeSemaphore(writeSemaphore );
         return NO_SPACE_ERROR;
     }
     pipes[freeIndex].pipe = m_malloc(PIPE_SIZE);
     if (pipes[freeIndex].pipe == NULL) {
-        destroySemaphore(readSemaphore );
-        destroySemaphore(writeSemaphore );
+        removeSemaphore(readSemaphore );
+        removeSemaphore(writeSemaphore );
         return NO_SPACE_ERROR;
     }
     pipes[freeIndex].pipeID = id;
@@ -79,15 +79,15 @@ int getPipeIndex(unsigned int id){
 }
 
 int setupAvailablePipe() {
-    int id = findAvailablePipe();
+    int id = generateAvailablePipeID();
     if (id == NO_SPACE_ERROR) {
         return NO_SPACE_ERROR;
     }
-    return (createPipe(id) == DONE) ? id : NO_SPACE_ERROR;
+    return (initializePipe(id) == DONE) ? id : NO_SPACE_ERROR;
 }
 
 int readPipeData(unsigned int id, char * buffer, unsigned int count){
-	int pos = findPipe(id);
+	int pos = getPipeIndex(id);
 	if(pos == INVALID_PIPE_ID){
 		return INVALID_PIPE_ID;
 	}
@@ -96,7 +96,7 @@ int readPipeData(unsigned int id, char * buffer, unsigned int count){
 	}
 	int i = 0;	
 	for(; i < count && !(pipes[pos].eof && pipes[pos].qty == 0); i++){
-		waitSemaphore(pipes[pos].readSemID);
+		waitForSemaphore(pipes[pos].readSemID);
 
 		buffer[i] = pipes[pos].pipe[pipes[pos].readPos];
 		MOD_INCREMENT(pipes[pos].readPos, PIPE_SIZE);
@@ -108,12 +108,12 @@ int readPipeData(unsigned int id, char * buffer, unsigned int count){
 }
 
 void removePipe(unsigned int id){
-	int pos = findPipe(id);
+	int pos = getPipeIndex(id);
 	if(pos == INVALID_PIPE_ID){
 		return;
 	}
-	destroySemaphore(pipes[pos].writeSemID);	
-	destroySemaphore(pipes[pos].readSemID);
+	removeSemaphore(pipes[pos].writeSemID);	
+	removeSemaphore(pipes[pos].readSemID);
 	m_free(pipes[pos].pipe);
 
 	pipes[pos].readSemID  = 0;
@@ -128,7 +128,7 @@ void removePipe(unsigned int id){
 }
 
 void setPipeEOF(unsigned int id){
-	int pos = findPipe(id);
+	int pos = getPipeIndex(id);
 	if(pos == INVALID_PIPE_ID){
 		return;
 	}
@@ -150,12 +150,12 @@ uint64_t getPipeDetails(pipesInfo * info){
 }
 
 int writePipeData(unsigned int id, const char * buffer, unsigned int count){
-	int pos = findPipe(id);
+	int pos = getPipeIndex(id);
 	if(pos == INVALID_PIPE_ID)
 		return INVALID_PIPE_ID;
 
 	for(int i=0; i<count; i++){
-		waitSemaphore(pipes[pos].writeSemID);
+		waitForSemaphore(pipes[pos].writeSemID);
 		pipes[pos].pipe[pipes[pos].writePos] = buffer[i];
 		MOD_INCREMENT(pipes[pos].writePos, PIPE_SIZE);
 		pipes[pos].qty++;

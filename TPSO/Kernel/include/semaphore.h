@@ -30,7 +30,7 @@ typedef struct semaphoreData{
 int initializeSemaphore(unsigned int id, unsigned int value);
 void removeSemaphore(unsigned int id);
 int findSemaphore(unsigned int id);
-unsigned int waitSemaphore(unsigned int id);
+unsigned int waitForSemaphore(unsigned int id);
 int getAvailableSemaphore();
 int setSemaphoreWithValue(unsigned int value);
 uint64_t getSemaphoreInfo(semaphoreInfo * info);

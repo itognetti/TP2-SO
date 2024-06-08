@@ -51,7 +51,7 @@ void destroyQueue(queueData * queue){
     m_free(queue->array);
 }
 
-void queueIterator(queueData * queue,unsigned int * ptr){
+void queuePeekAll(queueData * queue,unsigned int * ptr){
     *ptr = queue->readIndex;
 }
 
