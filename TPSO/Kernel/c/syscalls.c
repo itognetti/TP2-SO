@@ -1,3 +1,5 @@
+// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include "../include/syscalls.h"
 
 void sys_write_to_stdout(char *buffer, int row, int col, int color){    // while coding
