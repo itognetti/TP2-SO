@@ -31,18 +31,18 @@ void testSync(char *argv[]) {
   int increments, processes, semUse;
 
   if((increments = satoi(argv[1])) <= 0){
-    printf("Invalid increment value\n");
+    printf("Invalid argument, increment value must be a positive number\n");
     return;
   }
 
   if((processes = satoi(argv[2])) <= 0){
-    printf("Invalid quantity of processes value\n");
+    printf("Invalid argument, processes quantity value must be a positive number.\n");
     return;
   }
 
   semUse = satoi(argv[3]);
   if(semUse != 0 && semUse != 1){
-    printf("Invalid semaphore flag value\n");
+    printf("Invalid argument, semaphore flag value must be a number.\n");
     return;
   }
 

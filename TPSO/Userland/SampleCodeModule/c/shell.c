@@ -263,7 +263,7 @@ void ps(){
             case EXEC_BG:
                 printf("BACKGROUND\n"); break;
             case EXEC_FG:
-                printf("STDOUT\n"); break;
+                printf("FOREGROUND\n"); break;
             default:
                 printf("PIPE\n"); break;
         }
@@ -282,37 +282,54 @@ void loop(){
 }
 
 void kill(char ** args){
-  if(!isNum(args[1])) { 
-    printf("Argument must be process id.\n");
+    if(!isNum(args[1])) { 
+        printf("Invalid argument, process id must be a positive number.\n");
     return;
-  }
+    }
 
-  uint64_t pid = _atoi(args[1]);
+    uint64_t pid = _atoi(args[1]);
 
-  if (killProcess(pid) == INVALID_PID_CODE){
-    printf(ERR_INVALID_PID);
-  }
+    if (killProcess(pid) == INVALID_PID_CODE){
+        printf("This process can not be killed, please try again with another one.\n");
+        return;
+    }
 
-  return;
+    printf("Process id ");
+    printf(args[1]);
+    println(" killed");
+
+    return;
 }
 
 void nice(char **args) {
-    if (!isNum(args[1]) && !isNum(args[2])) {
-        printf("Invalid argument! Arguments must be numbers.\n");
+    if (!isNum(args[1])) {
+        printf("Invalid argument, process id must be a positive number.\n");
         return;
     }
+
+    if(!isNum(args[2])){
+        printf("Invalid argument, priority level must be a positive number.\n");
+        return;
+    }
+
     unsigned int pid = _atoi(args[1]);
     int priorityDelta = _atoi(args[2]);
-    niceProcess(pid, priorityDelta);
+    if (niceProcess(pid, priorityDelta) == -1){
+        printf("No process with id: ");
+        println(args[1]);
+    }
 }
 
 void block(char **args) {
     if (!isNum(args[1])) {
-        printf("Invalid argument! Argument must be a number.\n");
+        printf("Invalid argument, process id must be a positive number.\n");
         return;
     }
     uint64_t pid = _atoi(args[1]);
-    pauseOrUnpauseProcess((unsigned int)pid);
+    if (pauseOrUnpauseProcess((unsigned int)pid) == -1){
+        printf("No process found with id ");
+        println(args[1]);
+    }
     return;
 }
 

@@ -23,7 +23,6 @@
 #define ERR_MISSING_PARAM "The command requires a parameter to be provided.\n"
 #define ERR_MEMORY_ALLOC "Space allocation for arguments failed.\n"
 #define ERR_INVALID_COMMAND "This command is not recognized, please use the 'help' command to view available commands.\n"
-#define ERR_INVALID_PID "The specified pid is invalid. No process has this identification value.\n"
 
 #define INVALID_PID_CODE -1
 #define EXEC_BG 0

@@ -19,6 +19,8 @@
         "typeinfo": "c",
         "stdint.h": "c",
         "__locale": "c",
-        "childprocess.h": "c"
+        "childprocess.h": "c",
+        "variant": "c",
+        "chrono": "c"
     }
 }

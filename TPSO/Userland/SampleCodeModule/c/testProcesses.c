@@ -19,61 +19,62 @@ void testProcesses(char *argv[]) {
   char *auxiliaryArgs[] = {0};
 
   if ((maxProcesses = satoi(argv[1])) <= 0) {
-    println("Invalid total processes value");
+    println("Invalid argument, total processes value must be a positive number.");
     return;
   }
 
   ProcessRequest processRequests[maxProcesses];
   printf("Creating processes\n");
 
-  for (int i = 0; i < maxProcesses; i++) {
-    processRequests[i].pid = registerChildProcess((uint64_t)&endlessLoop, 1, 1, auxiliaryArgs);
-
-    if (processRequests[i].pid == -1) {
-      printf("Error creating process\n");
-      return;
-    } else {
-      processRequests[i].state = RUNNING;
-      aliveProcesses++;
-    }
-  }
-
-  while (aliveProcesses > 0) {
+  while(1){
     for (int i = 0; i < maxProcesses; i++) {
-      uint8_t action = getUniform(100) % 2;
+      processRequests[i].pid = registerChildProcess((uint64_t)&endlessLoop, 1, 1, auxiliaryArgs);
 
-      switch (action) {
-        case 0: // Kill process
-          if (processRequests[i].state == RUNNING || processRequests[i].state == BLOCKED) {
-            if (killProcess(processRequests[i].pid) == -1) {
-              printf("Error killing process\n");
-              return;
-            }
-            processRequests[i].state = KILLED;
-            aliveProcesses--;
-          }
-          break;
-
-        case 1: 
-          if (processRequests[i].state == RUNNING) {
-            if (pauseOrUnpauseProcess(processRequests[i].pid) == -1) {
-              printf("Error blocking process\n");
-              return;
-            }
-            processRequests[i].state = BLOCKED;
-          }
-          break;
+      if (processRequests[i].pid == -1) {
+        printf("Error creating process\n");
+        return;
+      } else {
+        processRequests[i].state = RUNNING;
+        aliveProcesses++;
       }
     }
 
-    
-    for (int i = 0; i < maxProcesses; i++) {
-      if (processRequests[i].state == BLOCKED && getUniform(100) % 2) {
-        if (pauseOrUnpauseProcess(processRequests[i].pid) == -1) {
-          printf("Error unblocking process\n");
-          return;
+    while (aliveProcesses > 0) {
+      for (int i = 0; i < maxProcesses; i++) {
+        uint8_t action = getUniform(100) % 2;
+
+        switch (action) {
+          case 0: // Kill process
+            if (processRequests[i].state == RUNNING || processRequests[i].state == BLOCKED) {
+              if (killProcess(processRequests[i].pid) == -1) {
+                printf("Error killing process\n");
+                return;
+              }
+              processRequests[i].state = KILLED;
+              aliveProcesses--;
+            }
+            break;
+
+          case 1: 
+            if (processRequests[i].state == RUNNING) {
+              if (pauseOrUnpauseProcess(processRequests[i].pid) == -1) {
+                printf("Error blocking process\n");
+                return;
+              }
+              processRequests[i].state = BLOCKED;
+            }
+            break;
         }
-        processRequests[i].state = RUNNING;
+      }
+
+      for (int i = 0; i < maxProcesses; i++) {
+        if (processRequests[i].state == BLOCKED && getUniform(100) % 2) {
+          if (pauseOrUnpauseProcess(processRequests[i].pid) == -1) {
+            printf("Error unblocking process\n");
+            return;
+          }
+          processRequests[i].state = RUNNING;
+        }
       }
     }
   }

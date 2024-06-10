@@ -21,7 +21,7 @@ void testMemoryManager(char *argv[]) {
   uint64_t maxMemoryLimit;
 
   if ((maxMemoryLimit = satoi(argv[1])) <= 0){
-    println("Invalid MB value");
+    println("Invalid argument, MB value must be a positive number.");
     return;
   }
   
